@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Ejercicios de Electricidad - Curso 25-26</title>
+    <style>
+        :root {
+            --primary-color: #005A9C;
+            --secondary-color: #4f46e5;
+            --accent-color: #10b981;
+            --text-dark: #333;
+            --text-light: #666;
+            --background-light: #f4f7f9;
+            --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-hover: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, var(--background-light) 0%, #e8f4fd 100%);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #004a8c 100%);
+            color: var(--white);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Main content */
+        main {
+            padding: 4rem 0;
+        }
+
+        .intro-section {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .intro-section h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .intro-section p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* Cards Grid */
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .exercise-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exercise-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .exercise-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-1 .card-icon { background: linear-gradient(135deg, var(--primary-color), #0070d4); }
+        .card-2 .card-icon { background: linear-gradient(135deg, var(--secondary-color), #6366f1); }
+        .card-3 .card-icon { background: linear-gradient(135deg, var(--accent-color), #34d399); }
+
+        .exercise-card h3 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .exercise-card p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .features-list li {
+            padding: 0.5rem 0;
+            color: var(--text-light);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .features-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #0070d4);
+            color: var(--white);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary-color), #6366f1);
+            color: var(--white);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent-color), #34d399);
+            color: var(--white);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-color);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+        }
+
+        .language-selector button {
+            background: rgba(255,255,255,0.2);
+            color: var(--white);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .language-selector button:hover,
+        .language-selector button.active {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2rem; }
+            header p { font-size: 1rem; }
+            .exercises-grid { grid-template-columns: 1fr; }
+            .container { padding: 0 1rem; }
+            .language-selector {
+                position: static;
+                text-align: center;
+                margin-top: 1rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff40;
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .exercise-card {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .exercise-card:nth-child(2) {
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+
+        .exercise-card:nth-child(3) {
+            animation-delay: 0.4s;
+            animation-fill-mode: both;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="language-selector">
+            <button onclick="setLanguage('es')" id="lang-es" class="active">ES</button>
+            <button onclick="setLanguage('ca')" id="lang-ca">CAT</button>
+        </div>
+        <div class="container">
+            <h1 data-lang="main-title">Portal de Ejercicios de Electricidad</h1>
+            <p data-lang="main-subtitle">Curso 2025-26 - Instalaciones Eléctricas</p>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="intro-section fade-in">
+                <h2 data-lang="welcome-title">Bienvenido al Portal de Aprendizaje</h2>
+                <p data-lang="welcome-text">
+                    Accede a diferentes módulos de ejercicios interactivos diseñados para mejorar tus 
+                    conocimientos en instalaciones eléctricas. Cada módulo incluye teoría, ejemplos 
+                    resueltos y ejercicios prácticos.
+                </p>
+            </section>
+
+            <section class="exercises-grid">
+                <!-- Módulo 1: Cálculos de Intensidad y Sección -->
+                <article class="exercise-card card-1">
+                    <div class="card-icon">⚡</div>
+                    <h3 data-lang="module1-title">Cálculos de Intensidad y Sección</h3>
+                    <p data-lang="module1-description">
+                        Entrenador completo para el cálculo de intensidades, secciones de conductores 
+                        y caídas de tensión según normativa ITC-BT.
+                    </p>
+                    <ul class="features-list">
+                        <li data-lang="module1-feature1">Cálculo de intensidades monofásicas y trifásicas</li>
+                        <li data-lang="module1-feature2">Determinación de secciones por caída de tensión</li>
+                        <li data-lang="module1-feature3">Ejercicios guiados paso a paso</li>
+                        <li data-lang="module1-feature4">Tests de evaluación automática</li>
+                    </ul>
+                    <a href="indexlast19.html" class="btn btn-primary" data-lang="access-module">
+                        Acceder al Módulo
+                    </a>
+                </article>
+
+                <!-- Módulo 2: Previsión de Cargas -->
+                <article class="exercise-card card-2">
+                    <div class="card-icon">📊</div>
+                    <h3 data-lang="module2-title">Previsión de Cargas ITC-BT-10</h3>
+                    <p data-lang="module2-description">
+                        Aprende a calcular la previsión de cargas en instalaciones eléctricas 
+                        siguiendo la instrucción técnica ITC-BT-10.
+                    </p>
+                    <ul class="features-list">
+                        <li data-lang="module2-feature1">Cálculo de cargas en viviendas</li>
+                        <li data-lang="module2-feature2">Previsión de cargas industriales</li>
+                        <li data-lang="module2-feature3">Aplicación de coeficientes de simultaneidad</li>
+                        <li data-lang="module2-feature4">Casos prácticos reales</li>
+                    </ul>
+                    <a href="indexlast6.html" class="btn btn-secondary" data-lang="access-module">
+                        Acceder al Módulo
+                    </a>
+                </article>
+
+                <!-- Módulo 3: Cálculo de Tubos ITC-BT-21 -->
+                <article class="exercise-card card-3">
+                    <div class="card-icon">�</div>
+                    <h3 data-lang="module3-title">Cálculo de Tubos ITC-BT-21</h3>
+                    <p data-lang="module3-description">
+                        Dimensionamiento de tubos protectores según la normativa ITC-BT-21, 
+                        en función de los conductores y el tipo de instalación.
+                    </p>
+                    <ul class="features-list">
+                        <li data-lang="module3-feature1">Dimensionamiento de tubos según conductores</li>
+                        <li data-lang="module3-feature2">Aplicación de normativa ITC-BT-21</li>
+                        <li data-lang="module3-feature3">Diferentes tipos de instalación</li>
+                        <li data-lang="module3-feature4">Ejercicios prácticos interactivos</li>
+                    </ul>
+                    <a href="indexnew10 (cable 750v)+guiadosele21c.html" class="btn btn-accent" data-lang="access-module">
+                        Acceder al Módulo
+                    </a>
+                </article>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p data-lang="footer-text">
+                © 2025 - Portal de Ejercicios de Electricidad | Curso de Instalaciones Eléctricas
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Configuración de idiomas
+        const translations = {
+            es: {
+                'main-title': 'Portal de Ejercicios de Electricidad',
+                'main-subtitle': 'Curso 2025-26 - Instalaciones Eléctricas',
+                'welcome-title': 'Bienvenido al Portal de Aprendizaje',
+                'welcome-text': 'Accede a diferentes módulos de ejercicios interactivos diseñados para mejorar tus conocimientos en instalaciones eléctricas. Cada módulo incluye teoría, ejemplos resueltos y ejercicios prácticos.',
+                
+                'module1-title': 'Cálculos de Intensidad y Sección',
+                'module1-description': 'Entrenador completo para el cálculo de intensidades, secciones de conductores y caídas de tensión según normativa ITC-BT.',
+                'module1-feature1': 'Cálculo de intensidades monofásicas y trifásicas',
+                'module1-feature2': 'Determinación de secciones por caída de tensión',
+                'module1-feature3': 'Ejercicios guiados paso a paso',
+                'module1-feature4': 'Tests de evaluación automática',
+                
+                'module2-title': 'Previsión de Cargas ITC-BT-10',
+                'module2-description': 'Aprende a calcular la previsión de cargas en instalaciones eléctricas siguiendo la instrucción técnica ITC-BT-10.',
+                'module2-feature1': 'Cálculo de cargas en viviendas',
+                'module2-feature2': 'Previsión de cargas industriales',
+                'module2-feature3': 'Aplicación de coeficientes de simultaneidad',
+                'module2-feature4': 'Casos prácticos reales',
+                
+                'module3-title': 'Cálculo de Tubos ITC-BT-21',
+                'module3-description': 'Dimensionamiento de tubos protectores según la normativa ITC-BT-21, en función de los conductores y el tipo de instalación.',
+                'module3-feature1': 'Dimensionamiento de tubos según conductores',
+                'module3-feature2': 'Aplicación de normativa ITC-BT-21',
+                'module3-feature3': 'Diferentes tipos de instalación',
+                'module3-feature4': 'Ejercicios prácticos interactivos',
+                
+                'access-module': 'Acceder al Módulo',
+                'footer-text': '© 2025 - Portal de Ejercicios de Electricidad | Curso de Instalaciones Eléctricas'
+            },
+            ca: {
+                'main-title': 'Portal d\'Exercicis d\'Electricitat',
+                'main-subtitle': 'Curs 2025-26 - Instal·lacions Elèctriques',
+                'welcome-title': 'Benvingut al Portal d\'Aprenentatge',
+                'welcome-text': 'Accedeix a diferents mòduls d\'exercicis interactius dissenyats per millorar els teus coneixements en instal·lacions elèctriques. Cada mòdul inclou teoria, exemples resolts i exercicis pràctics.',
+                
+                'module1-title': 'Càlculs d\'Intensitat i Secció',
+                'module1-description': 'Entrenador complet per al càlcul d\'intensitats, seccions de conductors i caigudes de tensió segons normativa ITC-BT.',
+                'module1-feature1': 'Càlcul d\'intensitats monofàsiques i trifàsiques',
+                'module1-feature2': 'Determinació de seccions per caiguda de tensió',
+                'module1-feature3': 'Exercicis guiats pas a pas',
+                'module1-feature4': 'Tests d\'avaluació automàtica',
+                
+                'module2-title': 'Previsió de Càrregues ITC-BT-10',
+                'module2-description': 'Aprèn a calcular la previsió de càrregues en instal·lacions elèctriques seguint la instrucció tècnica ITC-BT-10.',
+                'module2-feature1': 'Càlcul de càrregues en habitatges',
+                'module2-feature2': 'Previsió de càrregues industrials',
+                'module2-feature3': 'Aplicació de coeficients de simultaneïtat',
+                'module2-feature4': 'Casos pràctics reals',
+                
+                'module3-title': 'Càlcul de Tubs ITC-BT-21',
+                'module3-description': 'Dimensionament de tubs protectors segons la normativa ITC-BT-21, en funció dels conductors i el tipus d\'instal·lació.',
+                'module3-feature1': 'Dimensionament de tubs segons conductors',
+                'module3-feature2': 'Aplicació de normativa ITC-BT-21',
+                'module3-feature3': 'Diferents tipus d\'instal·lació',
+                'module3-feature4': 'Exercicis pràctics interactius',
+                
+                'access-module': 'Accedir al Mòdul',
+                'footer-text': '© 2025 - Portal d\'Exercicis d\'Electricitat | Curs d\'Instal·lacions Elèctriques'
+            }
+        };
+
+        let currentLanguage = 'es';
+
+        // Función para cambiar idioma
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Actualizar botones de idioma
+            document.getElementById('lang-es').classList.toggle('active', lang === 'es');
+            document.getElementById('lang-ca').classList.toggle('active', lang === 'ca');
+            
+            // Actualizar textos
+            document.querySelectorAll('[data-lang]').forEach(element => {
+                const key = element.getAttribute('data-lang');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+
+            // Guardar preferencia en localStorage
+            localStorage.setItem('preferredLanguage', lang);
+        }
+
+        // Función para agregar efectos de carga a los botones
+        function addLoadingEffect(button) {
+            const originalText = button.textContent;
+            button.innerHTML = originalText + '<span class="loading"></span>';
+            button.style.pointerEvents = 'none';
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.pointerEvents = 'auto';
+            }, 1000);
+        }
+
+        // Event listeners para botones de módulos
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar idioma guardado
+            const savedLanguage = localStorage.getItem('preferredLanguage') || 'es';
+            setLanguage(savedLanguage);
+
+            // Agregar efectos de carga a los enlaces
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (this.getAttribute('href')) {
+                        addLoadingEffect(this);
+                    }
+                });
+            });
+
+            // Agregar animaciones al scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.exercise-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+
+        // Función para manejar errores de carga
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName === 'A') {
+                console.error('Error al cargar el módulo:', e.target.href);
+                alert('Error al cargar el módulo. Por favor, verifica que el archivo existe.');
+            }
+        });
+
+        // Analytics simple (opcional)
+        function trackModuleAccess(moduleName) {
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'module_access', {
+                    'module_name': moduleName,
+                    'language': currentLanguage
+                });
+            }
+        }
+    </script>
+</body>
+</html>
