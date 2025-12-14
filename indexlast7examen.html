@@ -1,0 +1,2891 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITC-BT-10: Previsión de cargas</title>
+    <style>
+        /* === ESTILOS CSS === */
+        /* Definición de la apariencia visual de todos los elementos de la página */
+
+        /* --- Estilos Generales --- */
+        /* Configuración básica del cuerpo de la página */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* Fuentes del sistema para mejor legibilidad */
+            line-height: 1.6; /* Espaciado entre líneas para facilitar la lectura */
+            margin: 0; /* Eliminar márgenes por defecto del navegador */
+            padding: 0; /* Eliminar padding por defecto del navegador */
+            background-color: #f4f7f9; /* Color de fondo azul claro */
+            color: #333; /* Color de texto principal */
+            transition: background-color 0.3s; /* Transición suave para cambios de color de fondo */
+        }
+        /* Contenedor principal para centrar el contenido */
+        .container {
+            max-width: 900px; /* Ancho máximo del contenido */
+            margin: auto; /* Centrado automático horizontal */
+            overflow: hidden; /* Ocultar desbordamiento del contenido */
+            padding: 0 20px; /* Espaciado interno lateral */
+        }
+
+        /* Cabecera de la página */
+        header {
+            background: #005a9c; /* Color de fondo azul corporativo */
+            color: #fff; /* Texto en blanco */
+            padding: 1.2rem 0; /* Espaciado interno vertical */
+            text-align: center; /* Centrar texto */
+            border-bottom: 4px solid #004a8c; /* Borde inferior azul más oscuro */
+        }
+        header h1 {
+            margin: 0; /* Eliminar márgenes del título */
+            font-size: 2em; /* Tamaño de fuente grande para el título */
+        }
+
+        /* Títulos de segundo y tercer nivel */
+        h2, h3 {
+            color: #005a9c; /* Color azul corporativo para los títulos */
+        }
+        /* Estilo básico para botones principales */
+        .btn {
+            display: inline-block; /* Comportamiento de elemento en línea con propiedades de bloque */
+            background: #005a9c; /* Color de fondo azul corporativo */
+            color: #fff; /* Texto en blanco */
+            padding: 12px 25px; /* Espaciado interno para hacer el botón más cómodo de usar */
+            border: none; /* Sin borde */
+            border-radius: 5px; /* Esquinas redondeadas */
+            cursor: pointer; /* Cambiar cursor a puntero al pasar por encima */
+            text-decoration: none; /* Sin subrayado de texto */
+            text-align: center; /* Centrar texto del botón */
+            font-size: 1em; /* Tamaño de fuente estándar */
+            transition: background-color 0.3s, transform 0.2s; /* Transiciones suaves para efectos hover */
+        }
+        /* Efecto hover para botones - cambio de color y elevación */
+        .btn:hover {
+            background: #004a8c; /* Color más oscuro al pasar el ratón */
+            transform: translateY(-2px); /* Efecto de elevación sutil */
+        }
+        /* Variante de botón secundario con color gris */
+        .btn-secondary {
+            background-color: #6c757d; /* Color gris */
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268; /* Gris más oscuro en hover */
+        }
+        /* Clase para ocultar elementos */
+        .hidden {
+            display: none; /* Hace invisible el elemento */
+        }
+
+        /* --- Vistas Específicas --- */
+        /* Contenedor principal para cada vista de la aplicación */
+        .view-box {
+            background: #fff; /* Fondo blanco */
+            padding: 2.5rem; /* Espaciado interno generoso */
+            margin-top: 2rem; /* Margen superior */
+            border-radius: 8px; /* Esquinas redondeadas */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Sombra sutil para profundidad */
+        }
+
+        /* Estilos para campos de entrada de datos */
+        input[type="text"], input[type="password"], input[type="number"], select {
+            width: 100%; /* Ancho completo del contenedor */
+            padding: 12px; /* Espaciado interno para comodidad */
+            margin-bottom: 15px; /* Margen inferior entre campos */
+            border-radius: 5px; /* Esquinas redondeadas */
+            border: 1px solid #ddd; /* Borde gris claro */
+            box-sizing: border-box; /* Incluir padding y border en el ancho total */
+            font-size: 1em; /* Tamaño de fuente estándar */
+            background-color: white; /* Fondo blanco */
+        }
+        
+        /* Estilo específico para listas desplegables */
+        select {
+            cursor: pointer; /* Cambiar cursor para indicar interactividad */
+        }
+        
+        /* Efecto focus para listas desplegables */
+        select:focus {
+            border-color: #005a9c; /* Cambiar color del borde al enfocar */
+            outline: none; /* Eliminar outline por defecto del navegador */
+            box-shadow: 0 0 5px rgba(0, 90, 156, 0.3); /* Sombra azul sutil al enfocar */
+        }
+        /* Diseño de cuadrícula para los bloques de ejercicios */
+        .exercise-blocks {
+            display: grid; /* Usar CSS Grid para el layout */
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Columnas que se adaptan automáticamente */
+            gap: 20px; /* Espacio entre elementos de la cuadrícula */
+            margin-top: 20px; /* Margen superior */
+        }
+
+        /* Estilo para cada bloque individual de ejercicio */
+        .block {
+            background: #f8f9fa; /* Fondo gris muy claro */
+            padding: 20px; /* Espaciado interno */
+            border-radius: 8px; /* Esquinas redondeadas */
+            text-align: center; /* Centrar contenido */
+            border: 1px solid #e9ecef; /* Borde gris claro */
+            transition: box-shadow 0.3s, transform 0.3s; /* Transiciones suaves para efectos hover */
+        }
+        /* Efecto hover para bloques - elevación y sombra */
+        .block:hover {
+            transform: translateY(-5px); /* Elevar el bloque al pasar el ratón */
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1); /* Sombra más pronunciada */
+        }
+        .block h3 {
+            margin-top: 0; /* Eliminar margen superior del título */
+        }
+
+        /* --- Estilos para Ejemplos y Ejercicios --- */
+        /* Contenedor para cada ejercicio individual */
+        .exercise-item {
+            background-color: #fff; /* Fondo blanco */
+            border: 1px solid #e0e0e0; /* Borde gris claro */
+            border-radius: 8px; /* Esquinas redondeadas */
+            padding: 20px; /* Espaciado interno */
+            margin-bottom: 20px; /* Margen inferior entre ejercicios */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra muy sutil */
+        }
+        .exercise-item h3 {
+            margin-top: 0; /* Eliminar margen superior del título */
+            border-bottom: 2px solid #005a9c; /* Línea inferior azul */
+            padding-bottom: 10px; /* Espaciado antes de la línea */
+        }
+
+        /* Estilo para mostrar el enunciado del problema */
+        .enunciado {
+            white-space: pre-wrap; /* Mantener los saltos de línea del enunciado */
+            background-color: #e9ecef; /* Fondo gris claro */
+            padding: 15px; /* Espaciado interno */
+            border-radius: 5px; /* Esquinas redondeadas */
+            font-family: "Courier New", Courier, monospace; /* Fuente monoespaciada para mejor lectura */
+            margin-bottom: 15px; /* Margen inferior */
+        }
+
+        /* Estilo para mostrar la solución del problema */
+        .solucion {
+            white-space: pre-wrap; /* Mantener formato de texto */
+            background-color: #f0fff0; /* Fondo verde muy claro */
+            border-left: 4px solid #28a745; /* Borde izquierdo verde */
+            padding: 15px; /* Espaciado interno */
+            border-radius: 5px; /* Esquinas redondeadas */
+            margin-top: 10px; /* Margen superior */
+        }
+
+        /* Modificar el fondo de solución cuando la respuesta es incorrecta */
+        .incorrect-feedback .solucion {
+            background-color: #fff3f3; /* Fondo rojo muy claro */
+            border-left-color: #dc3545; /* Borde izquierdo rojo */
+        }
+
+        /* Estilo para respuestas correctas */
+        .correct-answer {
+            color: #28a745; /* Texto verde */
+            font-weight: bold; /* Texto en negrita */
+        }
+
+        /* Estilo para respuestas incorrectas */
+        .incorrect-answer {
+            color: #dc3545; /* Texto rojo */
+            font-weight: bold; /* Texto en negrita */
+            text-decoration: line-through; /* Texto tachado */
+        }
+        
+        /* === Estilos para tablas de calibres CGP (Cuadro General de Protección) === */
+        .cgp-info {
+            background-color: #f8f9fa; /* Fondo gris claro */
+            border: 1px solid #dee2e6; /* Borde gris */
+            border-radius: 8px; /* Esquinas redondeadas */
+            padding: 15px; /* Espaciado interno */
+            margin: 20px 0; /* Márgenes superior e inferior */
+        }
+        
+        /* Tabla de calibres CGP */
+        .cgp-table {
+            width: 100%; /* Ancho completo */
+            border-collapse: collapse; /* Bordes unidos sin espacios */
+            margin-top: 10px; /* Margen superior */
+        }
+        
+        /* Celdas de la tabla CGP */
+        .cgp-table th, .cgp-table td {
+            border: 1px solid #dee2e6; /* Borde gris para todas las celdas */
+            padding: 8px 12px; /* Espaciado interno de las celdas */
+            text-align: center; /* Centrar contenido de las celdas */
+        }
+        
+        /* Encabezados de la tabla CGP */
+        .cgp-table th {
+            background-color: #005a9c; /* Fondo azul corporativo */
+            color: white; /* Texto blanco */
+            font-weight: bold; /* Texto en negrita */
+        }
+        
+        /* Filas pares de la tabla con fondo alternativo */
+        .cgp-table tr:nth-child(even) {
+            background-color: #f8f9fa; /* Fondo gris muy claro para filas pares */
+        }
+        
+        /* Fila seleccionada en la tabla CGP */
+        .cgp-selected {
+            background-color: #d4edda !important; /* Fondo verde claro, importante para sobrescribir otros estilos */
+            font-weight: bold; /* Texto en negrita */
+        }
+        
+        /* --- Estilos para Ejercicios Guiados --- */
+        /* Contenedor principal del ejercicio guiado */
+        .guided-exercise {
+            background-color: #f8f9fa; /* Fondo gris claro */
+            border: 2px solid #005a9c; /* Borde azul corporativo */
+            border-radius: 10px; /* Esquinas más redondeadas que otros elementos */
+            padding: 20px; /* Espaciado interno */
+            margin: 20px 0; /* Márgenes superior e inferior */
+        }
+        
+        /* Cada paso individual del ejercicio guiado */
+        .guided-step {
+            background-color: white; /* Fondo blanco */
+            border: 1px solid #dee2e6; /* Borde gris claro */
+            border-radius: 5px; /* Esquinas redondeadas */
+            padding: 15px; /* Espaciado interno */
+            margin: 15px 0; /* Márgenes superior e inferior */
+        }
+        
+        /* Pregunta de cada paso */
+        .step-question {
+            font-weight: bold; /* Texto en negrita */
+            color: #005a9c; /* Color azul corporativo */
+            margin-bottom: 10px; /* Margen inferior */
+        }
+        
+        /* Contenedor para entrada de datos en cada paso */
+        .step-input {
+            display: flex; /* Diseño flexbox */
+            align-items: center; /* Alinear elementos verticalmente al centro */
+            gap: 10px; /* Espacio entre elementos */
+            margin: 10px 0; /* Márgenes superior e inferior */
+        }
+        
+        /* Campo de entrada en cada paso */
+        .step-input input {
+            padding: 8px; /* Espaciado interno */
+            border: 1px solid #ccc; /* Borde gris */
+            border-radius: 4px; /* Esquinas redondeadas */
+            width: 150px; /* Ancho fijo */
+        }
+        
+        /* Retroalimentación general para cada paso */
+        .step-feedback {
+            margin-top: 10px; /* Margen superior */
+            padding: 10px; /* Espaciado interno */
+            border-radius: 5px; /* Esquinas redondeadas */
+        }
+        
+        /* Retroalimentación para respuestas correctas */
+        .step-success {
+            background-color: #d4edda; /* Fondo verde claro */
+            color: #155724; /* Texto verde oscuro */
+            border: 1px solid #c3e6cb; /* Borde verde claro */
+        }
+        
+        /* Retroalimentación para respuestas incorrectas */
+        .step-error {
+            background-color: #f8d7da; /* Fondo rojo claro */
+            color: #721c24; /* Texto rojo oscuro */
+            border: 1px solid #f5c6cb; /* Borde rojo claro */
+        }
+        
+        /* Retroalimentación para pistas o sugerencias */
+        .step-hint {
+            background-color: #fff3cd; /* Fondo amarillo claro */
+            color: #856404; /* Texto amarillo oscuro */
+            border: 1px solid #ffeaa7; /* Borde amarillo claro */
+        }
+        
+        /* Pasos completados (apariencia atenuada) */
+        .guided-step.completed {
+            opacity: 0.8; /* Reducir opacidad */
+            background-color: #f8f9fa; /* Fondo gris claro */
+            border-color: #e9ecef; /* Borde gris más claro */
+        }
+        
+        /* Preguntas de pasos completados */
+        .guided-step.completed .step-question {
+            color: #6c757d; /* Color gris para indicar que está completado */
+        }
+        
+        /* Botón específico para ejercicios guiados */
+        .btn-guided {
+            background: #28a745; /* Fondo verde */
+        }
+        
+        .btn-guided:hover {
+            background: #218838; /* Verde más oscuro en hover */
+        }
+        
+        /* === ESTILOS PARA FUNCIONALIDADES DE GRABACIÓN Y ENVÍO === */
+        
+        /* Botón de grabación */
+        .btn-recording {
+            background-color: #28a745; /* Verde para indicar grabación */
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-recording:hover {
+            background-color: #218838; /* Verde más oscuro en hover */
+        }
+        
+        /* Botón de envío al profesor */
+        .btn-submit {
+            background-color: #dc3545; /* Rojo para destacar la importancia */
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-submit:hover {
+            background-color: #c82333; /* Rojo más oscuro en hover */
+        }
+        
+        /* Botón deshabilitado después del envío */
+        .btn-submitted {
+            background-color: #6c757d; /* Gris para indicar que ya se envió */
+            cursor: not-allowed;
+        }
+        
+        /* Estilos para notificaciones */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            z-index: 10000;
+            max-width: 300px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        /* Animación para las notificaciones */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- Cabecera principal de la aplicación -->
+        <h1>ITC-BT-10: Previsión de cargas</h1>
+    </header>
+
+    <div class="container">
+        <!-- Contenedor principal que centra todo el contenido -->
+
+        <!-- === VISTA DE INICIO DE SESIÓN === -->
+        <!-- Primera vista que se muestra para que el alumno seleccione su nombre -->
+        <div id="loginView" class="view-box">
+            <h2>Acceso para Alumnos</h2>
+            <form id="loginForm">
+                <label for="studentSelect">Selecciona tu nombre:</label>
+                <!-- Lista desplegable con todos los nombres de los alumnos -->
+                <select id="studentSelect" name="studentSelect" required>
+                    <option value="">-- Selecciona tu nombre --</option>
+                    <!-- Lista completa de alumnos del curso -->
+                    <option value="Dariel Aguasvivas de Jesus">Dariel Aguasvivas de Jesus</option>
+                    <option value="Alfonso Caballero Montiel">Alfonso Caballero Montiel</option>
+                    <option value="Andrés Caballero Montiel">Andrés Caballero Montiel</option>
+                    <option value="Mohamed El miri">Mohamed El miri</option>
+                    <option value="Miguel Alejandro Gonzalez Moreno">Miguel Alejandro Gonzalez Moreno</option>
+                    <option value="Marc Jaime Darder">Marc Jaime Darder</option>
+                    <option value="Mohamed Kouroma">Mohamed Kouroma</option>
+                    <option value="Jaume Lopéz Llull">Jaume Lopéz Llull</option>
+                    <option value="Jeremy Josep Olivares llanos">Jeremy Josep Olivares llanos</option>
+                    <option value="Joan Miquel Oliver Vidal">Joan Miquel Oliver Vidal</option>
+                    <option value="Wasim Ouchen Benali">Wasim Ouchen Benali</option>
+                    <option value="Yamin Ouchen Benali">Yamin Ouchen Benali</option>
+                </select>
+                <button type="submit" class="btn">Entrar</button>
+            </form>
+        </div>
+
+        <!-- === VISTA DE SELECCIÓN DE BLOQUES === -->
+        <!-- Segunda vista que muestra los bloques de ejercicios disponibles -->
+        <div id="blocksView" class="view-box hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <!-- Mensaje de bienvenida personalizado con el nombre del alumno -->
+                <h2 id="welcomeMessage">Bienvenido</h2>
+                <!-- Botón para cerrar sesión -->
+                <button id="logoutBtn" class="btn btn-secondary">Cerrar Sesión</button>
+            </div>
+            
+            <!-- Cuadrícula con los tres bloques de ejercicios (ocultos para el examen) -->
+            <div class="exercise-blocks" style="display: none;">
+                <!-- Bloque 1: Ejercicios simples -->
+                <div class="block">
+                    <h3>Bloque 1</h3>
+                    <p>Previsión de cargas simples (viviendas, locales, etc.).</p>
+                    <button class="btn" onclick="startExercises(1)">Comenzar</button>
+                </div>
+                <!-- Bloque 2: Edificios sin LGA -->
+                <div class="block">
+                    <h3>Bloque 2</h3>
+                    <p>Cálculo de la carga total para edificios completos.</p>
+                    <button class="btn" onclick="startExercises(2)">Comenzar</button>
+                </div>
+                <!-- Bloque 3: Edificios con LGA -->
+                <div class="block">
+                    <h3>Bloque 3</h3>
+                    <p>Edificios completos incluyendo la Línea General de Alimentación (LGA).</p>
+                    <button class="btn" onclick="startExercises(3)">Comenzar</button>
+                </div>
+            </div>
+            
+            <!-- Botón de Examen -->
+            <div class="exam-section" style="text-align: center; margin-top: 30px;">
+                <div class="block" style="max-width: 500px; margin: 0 auto;">
+                    <h3>Examen</h3>
+                    <p>Resuelve 2 ejercicios complejos de edificios con LGA para demostrar tus conocimientos.</p>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn" onclick="startRecording()" style="background-color: #28a745; color: white; font-size: 1.1em; padding: 12px 24px;">🎥 Iniciar Grabación</button>
+                        <button id="examStartBtn" class="btn" onclick="startExam()" style="font-size: 1.2em; padding: 15px 30px; display: none;">Comenzar Examen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- === VISTA DE EJERCICIOS === -->
+        <!-- Tercera vista que muestra los ejercicios generados dinámicamente -->
+        <div id="exercisesView" class="hidden">
+            <div class="view-box">
+                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                     <!-- Botón para volver a la selección de bloques -->
+                     <button id="backToBlocksBtn" class="btn btn-secondary">← Volver a los bloques</button>
+                     <!-- Botón para cerrar sesión desde la vista de ejercicios -->
+                     <button id="logoutBtnExercises" class="btn btn-secondary">Cerrar Sesión</button>
+                 </div>
+                 
+                 <!-- Título dinámico que cambia según el tipo de contenido mostrado -->
+                 <h2 id="exerciseTitle"></h2>
+                 
+                 <!-- Área donde se muestran los ejercicios generados dinámicamente -->
+                 <div id="contentArea"></div>
+                 
+                 <!-- Área para botones de control (corregir, navegar, etc.) -->
+                 <div id="controlsArea" class="hidden" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div> <!-- Fin del contenedor principal -->
+
+<script>
+// ================================================================
+// === CÓDIGO JAVASCRIPT PRINCIPAL ===
+// ================================================================
+
+// ================================================================
+// SECCIÓN 1: CONFIGURACIÓN Y ESTADO DE LA APLICACIÓN
+// ================================================================
+
+/**
+ * Estado global de la aplicación
+ * Mantiene la información sobre el usuario actual, el bloque seleccionado
+ * y los ejercicios generados para evitar duplicados
+ */
+const appState = {
+    currentBlock: null,        // Bloque actual seleccionado (1, 2 o 3)
+    currentStudent: null,      // Nombre del estudiante actual
+    generatedExercises: []     // Array de ejercicios ya generados para evitar repeticiones
+};
+
+// ================================================================
+// SECCIÓN 1.1: CONFIGURACIÓN PARA GRABACIÓN Y ENVÍO AL PROFESOR
+// ================================================================
+
+/**
+ * Configuración para envío de resultados del examen al profesor
+ * usando Google Sheets como base de datos
+ */
+const GOOGLE_SHEETS_CONFIG = {
+    // URL del Google Apps Script Web App (configurar después de crear el script)
+    WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbwof6IZEGowgROMuQ_SYVZsh7hmSB9cxscUvzDCJF0QZNHYdXKBY8FrDtZ6OPO8Yc9x/exec',
+    // ID de la hoja de cálculo de Google (configurar con el ID real)
+    SPREADSHEET_ID: '1zF5aKiWE5vOud4gJgO9WDhmCpMC9JF9qvNsQMpMoOTI',
+    // Habilitar/deshabilitar envío a Google Sheets
+    ENABLED: true,
+    // Modo debug para mostrar información de depuración
+    DEBUG_MODE: true
+};
+
+/**
+ * Contraseña para acceder al examen
+ * Solo con esta contraseña se puede acceder al modo examen
+ */
+const examPassword = "13HiX6589HOIhjxcHnWp";
+
+// ================================================================
+// SECCIÓN 2: REFERENCIAS DEL DOM
+// ================================================================
+
+/**
+ * Referencias a los elementos principales del DOM
+ * Se obtienen una vez al cargar la página para optimizar el rendimiento
+ */
+const loginView = document.getElementById('loginView');           // Vista de inicio de sesión
+const blocksView = document.getElementById('blocksView');         // Vista de selección de bloques
+const exercisesView = document.getElementById('exercisesView');   // Vista de ejercicios
+const welcomeMessage = document.getElementById('welcomeMessage'); // Mensaje de bienvenida
+const exerciseTitle = document.getElementById('exerciseTitle');   // Título de la sección de ejercicios
+const contentArea = document.getElementById('contentArea');       // Área donde se muestran los ejercicios
+const controlsArea = document.getElementById('controlsArea');     // Área de botones de control
+const backToBlocksBtn = document.getElementById('backToBlocksBtn'); // Botón para volver a bloques
+
+// ================================================================
+// SECCIÓN 3: EVENTOS Y MANEJADORES DE NAVEGACIÓN
+// ================================================================
+
+/**
+ * Manejador del formulario de inicio de sesión
+ * Valida que se haya seleccionado un alumno y cambia a la vista de bloques
+ */
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevenir el envío normal del formulario
+    const selectedStudent = document.getElementById('studentSelect').value;
+    
+    // Validar que se haya seleccionado un estudiante
+    if (!selectedStudent) {
+        alert('Por favor, selecciona tu nombre de la lista.');
+        return;
+    }
+    
+    // Guardar el estudiante actual y actualizar la interfaz
+    appState.currentStudent = selectedStudent;
+    welcomeMessage.textContent = `Bienvenido, ${selectedStudent}`;
+    
+    // Cambiar de vista: ocultar login y mostrar bloques
+    loginView.classList.add('hidden');
+    blocksView.classList.remove('hidden');
+});
+
+/**
+ * Manejador del botón "Volver a los bloques"
+ * Permite navegar desde la vista de ejercicios de vuelta a la selección de bloques
+ */
+backToBlocksBtn.addEventListener('click', () => {
+    exercisesView.classList.add('hidden');
+    blocksView.classList.remove('hidden');
+});
+
+/**
+ * Configuración de los botones de cerrar sesión
+ * Hay dos botones: uno en la vista de bloques y otro en la vista de ejercicios
+ */
+document.getElementById('logoutBtn').addEventListener('click', logout);
+document.getElementById('logoutBtnExercises').addEventListener('click', logout);
+
+/**
+ * Función para cerrar sesión
+ * Intenta cerrar la ventana del navegador, y si no es posible, redirige a una página en blanco
+ */
+function logout() {
+    // Intentar cerrar la página web
+    window.close();
+    
+    // Si window.close() no funciona (por restricciones del navegador), 
+    // redirigir a una página en blanco como alternativa
+    if (!window.closed) {
+        window.location.href = 'about:blank';
+    }
+}
+
+/**
+ * Función para volver al menú principal de bloques
+ * Permite navegar desde cualquier vista de ejercicios de vuelta al menú principal
+ */
+function backToBlocks() {
+    exercisesView.classList.add('hidden');
+    blocksView.classList.remove('hidden');
+}
+
+/**
+ * Función principal para iniciar los ejercicios de un bloque específico
+ * @param {number} blockNumber - Número del bloque (1, 2 o 3)
+ */
+function startExercises(blockNumber) {
+    appState.currentBlock = blockNumber;
+    
+    // Cambiar de vista: ocultar bloques y mostrar ejercicios
+    blocksView.classList.add('hidden');
+    exercisesView.classList.remove('hidden');
+    
+    // Mostrar primero los ejemplos resueltos
+    displayExamples();
+}
+
+/**
+ * Función para iniciar el examen con 2 ejercicios del bloque 3
+ * El examen va directamente a los ejercicios sin mostrar ejemplos
+ */
+function startExam() {
+    // Validar contraseña del examen antes de continuar
+    if (!validateExamPassword()) {
+        return; // Si la contraseña es incorrecta, no continuar
+    }
+    
+    appState.currentBlock = 3; // Los exámenes siempre usan ejercicios del bloque 3
+    
+    // Cambiar de vista: ocultar bloques y mostrar ejercicios
+    blocksView.classList.add('hidden');
+    exercisesView.classList.remove('hidden');
+    
+    // Ir directamente a los ejercicios del examen (sin ejemplos)
+    displayExamProblems();
+}
+
+/**
+ * Función para mostrar los 10 ejemplos resueltos del bloque seleccionado
+ * Los ejemplos sirven como referencia para que los alumnos entiendan la metodología
+ */
+function displayExamples() {
+    // Actualizar el título de la sección
+    exerciseTitle.textContent = `Bloque ${appState.currentBlock}: 10 Ejemplos Resueltos`;
+    
+    // Limpiar áreas de contenido
+    contentArea.innerHTML = '';
+    controlsArea.innerHTML = '';
+
+    // Generar y mostrar 10 ejemplos resueltos
+    for (let i = 0; i < 10; i++) {
+        const exercise = generateExercise(appState.currentBlock);
+        
+        // Crear HTML para cada ejemplo con enunciado y solución completa
+        const exampleHTML = `
+            <div class="exercise-item">
+                <h3>Ejemplo ${i + 1}</h3>
+                <div class="enunciado">${exercise.enunciado}</div>
+                <h4>Resolución Paso a Paso:</h4>
+                <div class="solucion">${exercise.solucion}</div>
+                ${exercise.tablaCGP ? exercise.tablaCGP : ''}
+            </div>
+        `;
+        contentArea.innerHTML += exampleHTML;
+    }
+
+    // Crear botones de navegación
+    // Botón para ir a ejercicios para resolver
+    const practiceBtn = document.createElement('button');
+    practiceBtn.className = 'btn';
+    practiceBtn.textContent = 'Ir a la página de ejercicios';
+    practiceBtn.onclick = displayPracticeProblems;
+    
+    // Botón para ejercicios guiados paso a paso
+    const guidedBtn = document.createElement('button');
+    guidedBtn.className = 'btn btn-guided';
+    guidedBtn.textContent = 'Ejercicios Guiados';
+    guidedBtn.onclick = startGuidedExercise;
+    guidedBtn.style.marginLeft = '10px';
+    
+    // Añadir botones al área de controles
+    controlsArea.appendChild(practiceBtn);
+    controlsArea.appendChild(guidedBtn);
+    controlsArea.classList.remove('hidden');
+}
+
+/**
+ * Función para mostrar ejercicios sin resolver para que el alumno practique
+ * Genera 10 ejercicios nuevos donde el alumno debe introducir la respuesta
+ */
+function displayPracticeProblems() {
+    // Determinar número de ejercicios según el bloque
+    let numEjercicios;
+    if (appState.currentBlock === 2) {
+        numEjercicios = 5;
+    } else if (appState.currentBlock === 3) {
+        numEjercicios = 4;
+    } else {
+        numEjercicios = 10; // Bloque 1
+    }
+    
+    // Actualizar título y limpiar áreas
+    exerciseTitle.textContent = `Bloque ${appState.currentBlock}: ${numEjercicios} Ejercicios para Resolver`;
+    contentArea.innerHTML = '';
+    controlsArea.innerHTML = '';
+    appState.generatedExercises = []; // Reiniciar lista de ejercicios generados
+
+    // Generar ejercicios según el bloque
+    for (let i = 0; i < numEjercicios; i++) {
+        const exercise = generateExercise(appState.currentBlock);
+        appState.generatedExercises.push(exercise); // Guardar para la corrección
+        
+        let problemHTML = `
+            <div class="exercise-item" id="problem-${i}">
+                <h3>Ejercicio ${i + 1}</h3>
+                <div class="enunciado">${exercise.enunciado}</div>
+        `;
+        
+        // Para el bloque 3, solicitar múltiples respuestas
+        if (appState.currentBlock === 3) {
+            problemHTML += `
+                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                    <h4>Respuestas requeridas:</h4>
+                    
+                    <label for="pt-${i}"><b>1. Potencia Total del Edificio (PT) en W:</b></label>
+                    <input type="number" id="pt-${i}" placeholder="Potencia total en Watts">
+                    
+                    <label for="intensidad-${i}"><b>2. Intensidad calculada en A:</b></label>
+                    <input type="number" id="intensidad-${i}" step="0.01" placeholder="Intensidad en Amperios">
+                    
+                    <label for="fusible-${i}"><b>3. Fusible CGP seleccionado en A:</b></label>
+                    <input type="number" id="fusible-${i}" placeholder="Fusible en Amperios">
+                    
+                    <label for="calibre-${i}"><b>4. Calibre CGP seleccionado en A:</b></label>
+                    <input type="number" id="calibre-${i}" placeholder="Calibre en Amperios">
+                    
+                    <label for="seccion-lga-${i}"><b>5. Sección final de la LGA en mm²:</b></label>
+                    <input type="number" id="seccion-lga-${i}" placeholder="Sección LGA en mm²">
+                </div>
+            `;
+        } else {
+            // Para bloques 1 y 2, solo la respuesta de potencia
+            problemHTML += `
+                <label for="answer-${i}"><b>Tu respuesta (en W):</b></label>
+                <input type="number" id="answer-${i}" placeholder="Introduce el resultado numérico en Watts">
+            `;
+        }
+        
+        problemHTML += `
+                <div id="feedback-${i}" class="feedback-area"></div>
+            </div>
+        `;
+        
+        contentArea.innerHTML += problemHTML;
+    }
+
+    // Crear botón para corregir todos los ejercicios
+    const checkBtn = document.createElement('button');
+    checkBtn.className = 'btn';
+    checkBtn.textContent = 'Corregir Ejercicios';
+    checkBtn.onclick = checkAnswers;
+    controlsArea.appendChild(checkBtn);
+}
+
+/**
+ * Función específica para mostrar los ejercicios del examen
+ * Incluye 4 ejercicios del bloque 1 (0.5 pts c/u) y 2 ejercicios del bloque 3 (0.8 pts por apartado)
+ * Puntuación total: 4×0.5 + 2×5×0.8 = 2 + 8 = 10 puntos
+ */
+function displayExamProblems() {
+    const numEjerciciosBloque1 = 4; // 4 ejercicios del bloque 1
+    const numEjerciciosBloque3 = 2; // 2 ejercicios del bloque 3
+    
+    // Actualizar título y limpiar áreas
+    exerciseTitle.textContent = `Examen: Previsión de Cargas ITC-BT-10`;
+    contentArea.innerHTML = '';
+    controlsArea.innerHTML = '';
+    appState.generatedExercises = []; // Reiniciar lista de ejercicios generados
+
+    // Mostrar información de puntuación
+    contentArea.innerHTML += `
+        <div style="background-color: #e7f3ff; border: 2px solid #005a9c; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+            <h3 style="margin-top: 0; color: #005a9c;">📋 Estructura del Examen</h3>
+            <ul style="margin-bottom: 0;">
+                <li><strong>Parte A:</strong> ${numEjerciciosBloque1} ejercicios de cargas simples (${numEjerciciosBloque1} × 0.5 = <strong>2 puntos</strong>)</li>
+                <li><strong>Parte B:</strong> ${numEjerciciosBloque3} ejercicios de edificios con LGA (${numEjerciciosBloque3} × 5 apartados × 0.8 = <strong>8 puntos</strong>)</li>
+                <li><strong>Total:</strong> 10 puntos</li>
+            </ul>
+        </div>
+    `;
+
+    // === PARTE A: Ejercicios del Bloque 1 ===
+    contentArea.innerHTML += `<h2 style="color: #005a9c; border-bottom: 2px solid #005a9c; padding-bottom: 10px;">Parte A: Cargas Simples (0.5 pts cada uno)</h2>`;
+    
+    for (let i = 0; i < numEjerciciosBloque1; i++) {
+        const exercise = generateExercise(1); // Bloque 1: cargas simples
+        exercise.bloque = 1; // Marcar como bloque 1
+        appState.generatedExercises.push(exercise);
+        
+        let problemHTML = `
+            <div class="exercise-item" id="problem-${i}">
+                <h3>Ejercicio A.${i + 1} <span style="color: #6c757d; font-size: 0.8em;">(0.5 pts)</span></h3>
+                <div class="enunciado">${exercise.enunciado}</div>
+                <label for="answer-${i}"><b>Tu respuesta (en W):</b></label>
+                <input type="number" id="answer-${i}" placeholder="Introduce el resultado numérico en Watts">
+                <div id="feedback-${i}" class="feedback-area"></div>
+            </div>
+        `;
+        contentArea.innerHTML += problemHTML;
+    }
+
+    // === PARTE B: Ejercicios del Bloque 3 ===
+    contentArea.innerHTML += `<h2 style="color: #005a9c; border-bottom: 2px solid #005a9c; padding-bottom: 10px; margin-top: 30px;">Parte B: Edificios con LGA (0.8 pts cada apartado)</h2>`;
+    
+    for (let i = 0; i < numEjerciciosBloque3; i++) {
+        const globalIndex = numEjerciciosBloque1 + i; // Índice global para los IDs
+        const exercise = generateExercise(3); // Bloque 3: edificios con LGA
+        exercise.bloque = 3; // Marcar como bloque 3
+        appState.generatedExercises.push(exercise);
+        
+        let problemHTML = `
+            <div class="exercise-item" id="problem-${globalIndex}">
+                <h3>Ejercicio B.${i + 1} <span style="color: #6c757d; font-size: 0.8em;">(5 apartados × 0.8 = 4 pts)</span></h3>
+                <div class="enunciado">${exercise.enunciado}</div>
+                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                    <h4>Respuestas requeridas:</h4>
+                    
+                    <label for="pt-${globalIndex}"><b>1. Potencia Total del Edificio (PT) en W:</b> <span style="color: #6c757d;">(0.8 pts)</span></label>
+                    <input type="number" id="pt-${globalIndex}" placeholder="Potencia total en Watts">
+                    
+                    <label for="intensidad-${globalIndex}"><b>2. Intensidad calculada en A:</b> <span style="color: #6c757d;">(0.8 pts)</span></label>
+                    <input type="number" id="intensidad-${globalIndex}" step="0.01" placeholder="Intensidad en Amperios">
+                    
+                    <label for="fusible-${globalIndex}"><b>3. Fusible CGP seleccionado en A:</b> <span style="color: #6c757d;">(0.8 pts)</span></label>
+                    <input type="number" id="fusible-${globalIndex}" placeholder="Fusible en Amperios">
+                    
+                    <label for="calibre-${globalIndex}"><b>4. Calibre CGP seleccionado en A:</b> <span style="color: #6c757d;">(0.8 pts)</span></label>
+                    <input type="number" id="calibre-${globalIndex}" placeholder="Calibre en Amperios">
+                    
+                    <label for="seccion-lga-${globalIndex}"><b>5. Sección final de la LGA en mm²:</b> <span style="color: #6c757d;">(0.8 pts)</span></label>
+                    <input type="number" id="seccion-lga-${globalIndex}" placeholder="Sección LGA en mm²">
+                </div>
+                <div id="feedback-${globalIndex}" class="feedback-area"></div>
+            </div>
+        `;
+        
+        contentArea.innerHTML += problemHTML;
+    }
+
+    // Crear botón para enviar examen al profesor
+    const submitBtn = document.createElement('button');
+    submitBtn.className = 'btn';
+    submitBtn.textContent = '📤 Enviar Examen al Profesor';
+    submitBtn.onclick = submitExamToTeacher;
+    submitBtn.style.backgroundColor = '#dc3545';
+    submitBtn.style.color = 'white';
+    submitBtn.style.marginTop = '20px';
+    console.log('Botón "Enviar Examen al Profesor" creado');
+    
+    // Añadir el botón solo al área de controles
+    controlsArea.appendChild(submitBtn);
+    
+    // Asegurarse de que el área de controles sea visible
+    controlsArea.classList.remove('hidden');
+    console.log('ControlsArea hecho visible, total de elementos:', controlsArea.children.length);
+}
+
+/**
+ * Función para corregir las respuestas del alumno
+ * Compara las respuestas introducidas con las soluciones correctas
+ * y envía un informe automático a Google Sheets
+ */
+function checkAnswers() {
+    let correctCount = 0; // Contador de respuestas correctas
+    
+    // Crear array con los datos de cada ejercicio para el informe
+    const exercisesData = appState.generatedExercises.map((exercise, i) => {
+        const feedbackArea = document.getElementById(`feedback-${i}`);
+        const problemContainer = document.getElementById(`problem-${i}`);
+        
+        if (appState.currentBlock === 3) {
+            // Manejo especial para el bloque 3 con múltiples respuestas
+            return checkBlock3Answers(exercise, i, feedbackArea, problemContainer);
+        } else {
+            // Manejo para bloques 1 y 2 (solo potencia)
+            return checkSimpleAnswer(exercise, i, feedbackArea, problemContainer);
+        }
+    });
+
+    // Contar respuestas correctas para el bloque 3
+    if (appState.currentBlock === 3) {
+        correctCount = exercisesData.reduce((count, data) => count + data.correctCount, 0);
+    } else {
+        correctCount = exercisesData.filter(data => data.isCorrect).length;
+    }
+
+    // Desactivar el botón para evitar envíos múltiples y mostrar estado
+    const checkBtn = controlsArea.querySelector('button');
+    checkBtn.disabled = true;
+    checkBtn.textContent = 'Enviando informe...';
+
+    // Enviar resultados a Google Sheets
+    sendResultsToGoogleSheets(correctCount, exercisesData);
+}
+
+/**
+ * Función específica para corregir las respuestas del examen
+ * Similar a checkAnswers pero para los 2 ejercicios del examen
+ */
+function checkExamAnswers() {
+    let correctCount = 0; // Contador de respuestas correctas
+    
+    // Crear array con los datos de cada ejercicio del examen para el informe
+    const exercisesData = appState.generatedExercises.map((exercise, i) => {
+        const feedbackArea = document.getElementById(`feedback-${i}`);
+        const problemContainer = document.getElementById(`problem-${i}`);
+        
+        // Los ejercicios del examen son siempre del bloque 3 (múltiples respuestas)
+        return checkBlock3Answers(exercise, i, feedbackArea, problemContainer);
+    });
+
+    // Contar respuestas correctas del examen
+    correctCount = exercisesData.reduce((count, data) => count + data.correctCount, 0);
+
+    // Desactivar el botón para evitar envíos múltiples y mostrar estado
+    const checkBtn = controlsArea.querySelector('button');
+    checkBtn.disabled = true;
+    checkBtn.textContent = 'Enviando resultados del examen...';
+
+    // Enviar resultados del examen a Google Sheets con identificación especial
+    sendExamResultsToGoogleSheets(correctCount, exercisesData);
+}
+
+/**
+ * Función para verificar respuestas simples (bloques 1 y 2)
+ */
+function checkSimpleAnswer(exercise, index, feedbackArea, problemContainer) {
+    const userAnswerInput = document.getElementById(`answer-${index}`);
+    const userAnswer = parseFloat(userAnswerInput.value);
+    const correctAnswer = parseFloat(exercise.resultado.toFixed(2));
+    let isCorrect = false;
+
+    // Verificar si la respuesta es correcta (tolerancia de 0.1W)
+    if (Math.abs(userAnswer - correctAnswer) < 0.1) {
+        // Respuesta correcta
+        feedbackArea.innerHTML = `<p class="correct-answer">¡Correcto! La respuesta es ${correctAnswer} W.</p>`;
+        problemContainer.classList.remove('incorrect-feedback');
+        isCorrect = true;
+    } else {
+        // Respuesta incorrecta - mostrar solución completa
+        feedbackArea.innerHTML = `
+            <p>
+                <span class="incorrect-answer">Tu respuesta: ${isNaN(userAnswer) ? 'Inválida' : userAnswer + ' W'}</span>
+                <br>
+                <span class="correct-answer">Respuesta correcta: ${correctAnswer} W</span>
+            </p>
+            <h4>Resolución Detallada:</h4>
+            <div class="solucion">${exercise.solucion}</div>
+            ${exercise.tablaCGP ? exercise.tablaCGP : ''}
+        `;
+        problemContainer.classList.add('incorrect-feedback');
+    }
+
+    return {
+        question: exercise.enunciado.replace(/\n/g, ' '),
+        studentAnswer: isNaN(userAnswer) ? 'Sin respuesta' : userAnswer + ' W',
+        correctSolution: `${correctAnswer} W. Resolución: ${exercise.solucion.replace(/\n/g, ' ')}`,
+        isCorrect: isCorrect
+    };
+}
+
+/**
+ * Función para verificar múltiples respuestas del bloque 3
+ */
+function checkBlock3Answers(exercise, index, feedbackArea, problemContainer) {
+    // Obtener respuestas del usuario
+    const userPT = parseFloat(document.getElementById(`pt-${index}`).value);
+    const userIntensidad = parseFloat(document.getElementById(`intensidad-${index}`).value);
+    const userFusible = parseFloat(document.getElementById(`fusible-${index}`).value);
+    const userCalibre = parseFloat(document.getElementById(`calibre-${index}`).value);
+    const userSeccionLGA = parseFloat(document.getElementById(`seccion-lga-${index}`).value);
+    
+    // Obtener respuestas correctas
+    const correctPT = parseFloat(exercise.resultado.toFixed(2));
+    const correctIntensidad = parseFloat(exercise.cgpInfo.intensidad);
+    const correctFusible = exercise.fusibleInfo.fusible;
+    const correctCalibre = exercise.cgpInfo.calibre;
+    
+    // Extraer sección final de LGA de la solución
+    const seccionLGAMatch = exercise.solucion.match(/Sección adoptada \(la mayor\): ([\d,]+) mm²/);
+    const correctSeccionLGA = seccionLGAMatch ? parseFloat(seccionLGAMatch[1]) : exercise.conductorInfo.seccion;
+    
+    // Verificar cada respuesta con tolerancias apropiadas
+    const checks = [
+        { name: 'PT', user: userPT, correct: correctPT, unit: 'W', tolerance: 0.5 },
+        { name: 'Intensidad', user: userIntensidad, correct: correctIntensidad, unit: 'A', tolerance: 0.5 },
+        { name: 'Fusible CGP', user: userFusible, correct: correctFusible, unit: 'A', tolerance: 0 },
+        { name: 'Calibre CGP', user: userCalibre, correct: correctCalibre, unit: 'A', tolerance: 0 },
+        { name: 'Sección LGA', user: userSeccionLGA, correct: correctSeccionLGA, unit: 'mm²', tolerance: 0 }
+    ];
+    
+    let correctCount = 0;
+    let feedbackHTML = '<div style="margin-top: 10px;"><h4>Corrección:</h4>';
+    
+    checks.forEach(check => {
+        const isCorrect = !isNaN(check.user) && Math.abs(check.user - check.correct) <= check.tolerance;
+        if (isCorrect) correctCount++;
+        
+        const statusClass = isCorrect ? 'correct-answer' : 'incorrect-answer';
+        const statusIcon = isCorrect ? '✓' : '✗';
+        
+        feedbackHTML += `
+            <p>
+                <span class="${statusClass}">${statusIcon} ${check.name}: 
+                ${isNaN(check.user) ? 'Sin respuesta' : check.user + ' ' + check.unit}
+                ${!isCorrect ? ` → Correcto: ${check.correct} ${check.unit}` : ''}
+                </span>
+            </p>
+        `;
+    });
+    
+    feedbackHTML += `</div>`;
+    
+    // Si no todas las respuestas son correctas, mostrar solución completa
+    if (correctCount < checks.length) {
+        feedbackHTML += `
+            <h4>Resolución Detallada:</h4>
+            <div class="solucion">${exercise.solucion}</div>
+        `;
+        problemContainer.classList.add('incorrect-feedback');
+    } else {
+        feedbackHTML += `<p class="correct-answer"><strong>¡Perfecto! Todas las respuestas son correctas.</strong></p>`;
+        problemContainer.classList.remove('incorrect-feedback');
+    }
+    
+    feedbackArea.innerHTML = feedbackHTML;
+    
+    return {
+        question: exercise.enunciado.replace(/\n/g, ' '),
+        studentAnswers: {
+            PT: isNaN(userPT) ? 'Sin respuesta' : userPT + ' W',
+            Intensidad: isNaN(userIntensidad) ? 'Sin respuesta' : userIntensidad + ' A',
+            FusibleCGP: isNaN(userFusible) ? 'Sin respuesta' : userFusible + ' A',
+            CalibreCGP: isNaN(userCalibre) ? 'Sin respuesta' : userCalibre + ' A',
+            SeccionLGA: isNaN(userSeccionLGA) ? 'Sin respuesta' : userSeccionLGA + ' mm²'
+        },
+        correctSolution: `PT: ${correctPT} W, I: ${correctIntensidad} A, Fusible: ${correctFusible} A, Calibre: ${correctCalibre} A, LGA: ${correctSeccionLGA} mm²`,
+        correctCount: correctCount,
+        totalQuestions: checks.length
+    };
+}
+
+/**
+ * Función asíncrona para enviar los resultados a Google Sheets
+ * @param {number} correctCount - Número de respuestas correctas
+ * @param {Array} exercises - Array con los datos de cada ejercicio
+ */
+async function sendResultsToGoogleSheets(correctCount, exercises) {
+    // URL del script de Google Apps Script que recibe los datos
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzLZvn9QQ53F97Gk98S-LWYPBCAKGg-Oic5BoFJ0OaOu4UpYoec37zKgmbcNl5Dtwj4/exec";
+
+    // Preparar los datos para enviar
+    const payload = {
+        studentName: appState.currentStudent,
+        correctCount: correctCount,
+        exercises: exercises
+    };
+
+    try {
+        // Realizar petición POST a Google Apps Script
+        const response = await fetch(WEB_APP_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Importante para evitar errores de CORS con Apps Script
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        // Como usamos 'no-cors', no podemos leer la respuesta. 
+        // Asumimos que fue exitoso si no hay un error de red.
+        const checkBtn = controlsArea.querySelector('button');
+        checkBtn.textContent = '✔ Informe Enviado';
+        checkBtn.style.backgroundColor = '#28a745'; // Verde
+
+    } catch (error) {
+        // Manejar errores de red o del servidor
+        console.error('Error al enviar los datos:', error);
+        const checkBtn = controlsArea.querySelector('button');
+        checkBtn.textContent = 'Error al Enviar';
+        checkBtn.style.backgroundColor = '#dc3545'; // Rojo
+        
+        // Opcional: Reactivar el botón para reintentar después de 3 segundos
+        setTimeout(() => {
+            checkBtn.disabled = false;
+            checkBtn.textContent = 'Corregir y Enviar de Nuevo';
+            checkBtn.style.backgroundColor = ''; // Color original
+        }, 3000);
+    }
+}
+
+/**
+ * Función asíncrona para enviar los resultados del examen a Google Sheets
+ * Similar a sendResultsToGoogleSheets pero identifica específicamente que es un examen
+ * @param {number} correctCount - Número de respuestas correctas en el examen
+ * @param {Array} exercises - Array con los datos de cada ejercicio del examen
+ */
+async function sendExamResultsToGoogleSheets(correctCount, exercises) {
+    // URL del script de Google Apps Script que recibe los datos
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyrKNjZ3MPVHSj_xwlIfIDi1VUL7rKenwVzGVEEPPxG-I-a9pVjRoTjT0AgFNw1eJ9h/exec";
+
+    // Preparar los datos para enviar, marcando que es un examen
+    const payload = {
+        studentName: appState.currentStudent,
+        correctCount: correctCount,
+        exercises: exercises,
+        isExam: true, // Identificador especial para exámenes
+        examType: "Bloque 3 - Edificios con LGA", // Tipo de examen
+        totalQuestions: exercises.length * 5 // 5 preguntas por ejercicio en el examen
+    };
+
+    try {
+        // Realizar petición POST a Google Apps Script
+        const response = await fetch(WEB_APP_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Importante para evitar errores de CORS con Apps Script
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        // Como usamos 'no-cors', no podemos leer la respuesta. 
+        // Asumimos que fue exitoso si no hay un error de red.
+        const checkBtn = controlsArea.querySelector('button');
+        checkBtn.textContent = '✔ Examen Enviado';
+        checkBtn.style.backgroundColor = '#28a745'; // Verde
+        
+        // Mostrar mensaje de éxito específico para el examen
+        const successMessage = document.createElement('div');
+        successMessage.style.cssText = 'margin-top: 15px; padding: 10px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px;';
+        successMessage.innerHTML = `<strong>¡Examen completado!</strong> Tus resultados han sido enviados correctamente. Puntuación: ${correctCount} de ${exercises.length * 5} respuestas correctas.`;
+        controlsArea.appendChild(successMessage);
+
+    } catch (error) {
+        // Manejar errores de red o del servidor
+        console.error('Error al enviar los datos del examen:', error);
+        const checkBtn = controlsArea.querySelector('button');
+        checkBtn.textContent = 'Error al Enviar Examen';
+        checkBtn.style.backgroundColor = '#dc3545'; // Rojo
+        
+        // Opcional: Reactivar el botón para reintentar después de 3 segundos
+        setTimeout(() => {
+            checkBtn.disabled = false;
+            checkBtn.textContent = 'Corregir Examen';
+            checkBtn.style.backgroundColor = ''; // Color original
+        }, 3000);
+    }
+}
+
+// ================================================================
+// SECCIÓN 5: FUNCIONES DE GRABACIÓN Y ENVÍO AL PROFESOR
+// ================================================================
+
+/**
+ * Función para iniciar la grabación de pantalla
+ * Abre una herramienta de grabación externa en una nueva pestaña
+ */
+function startRecording() {
+    // Abrir herramienta de grabación de pantalla externa
+    window.open('https://screencapture.com/', '_blank');
+    
+    // Mostrar información al usuario sobre la grabación
+    alert('Se ha abierto una herramienta de grabación de pantalla.\n\n' +
+          'IMPORTANTE:\n' +
+          '1. Graba tu pantalla mientras resuelves el examen\n' +
+          '2. Al finalizar, descarga el video\n' +
+          '3. Sube el video al ClassRoom\n\n' +
+          'Pulsa Aceptar para continuar con el examen.');
+    
+    // Mostrar el botón "Comenzar Examen" después de iniciar la grabación
+    const examStartBtn = document.getElementById('examStartBtn');
+    if (examStartBtn) {
+        examStartBtn.style.display = 'inline-block';
+    }
+    
+    // Ocultar el botón "Iniciar Grabación" después de hacer clic
+    const recordingBtn = event.target;
+    if (recordingBtn) {
+        recordingBtn.style.display = 'none';
+    }
+}
+
+/**
+ * Función para validar la contraseña del examen
+ * Solo permite acceso al modo examen con la contraseña correcta
+ */
+function validateExamPassword() {
+    const enteredPassword = prompt('Introduce la contraseña del examen:');
+    if (enteredPassword === examPassword) {
+        return true;
+    } else {
+        alert('Contraseña incorrecta. No se puede acceder al examen.');
+        return false;
+    }
+}
+
+/**
+ * Función para enviar el examen resuelto al profesor
+ * Recopila todas las respuestas y las envía via Google Sheets
+ */
+function submitExamToTeacher() {
+    console.log('=== INICIO ENVÍO EXAMEN AL PROFESOR ===');
+    
+    // Verificar que hay ejercicios generados
+    if (!appState.generatedExercises || appState.generatedExercises.length === 0) {
+        alert('Error: No hay ejercicios para enviar. Genera primero los ejercicios del examen.');
+        return;
+    }
+    
+    // Contar respuestas completadas según el tipo de ejercicio
+    let filledCount = 0;
+    let totalInputs = 0;
+    
+    // Recopilar todos los inputs del examen
+    for (let i = 0; i < appState.generatedExercises.length; i++) {
+        const exercise = appState.generatedExercises[i];
+        
+        if (exercise.bloque === 1) {
+            // Bloque 1: solo tiene un input (answer)
+            const input = document.getElementById(`answer-${i}`);
+            if (input) {
+                totalInputs++;
+                if (input.value.trim() !== "") filledCount++;
+            }
+        } else {
+            // Bloque 3: tiene 5 inputs
+            const inputs = [
+                document.getElementById(`pt-${i}`),
+                document.getElementById(`intensidad-${i}`),
+                document.getElementById(`fusible-${i}`),
+                document.getElementById(`calibre-${i}`),
+                document.getElementById(`seccion-lga-${i}`)
+            ];
+            
+            inputs.forEach(input => {
+                if (input) {
+                    totalInputs++;
+                    if (input.value.trim() !== "") filledCount++;
+                }
+            });
+        }
+    }
+    
+    console.log('Total inputs:', totalInputs, 'Rellenados:', filledCount);
+    
+    // Si hay preguntas sin completar, mostrar confirmación
+    if (filledCount < totalInputs) {
+        const emptyCount = totalInputs - filledCount;
+        const confirmMessage = `Tienes ${emptyCount} respuesta(s) sin completar. ¿Estás seguro de que quieres enviar el examen?`;
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+    }
+    
+    // Recopilar datos del examen
+    const examData = collectExamDataForTeacher();
+    
+    console.log('Datos del examen recopilados:', examData);
+    
+    // Enviar a Google Sheets
+    sendExamToGoogleSheets(examData);
+    
+    // Mostrar mensajes de confirmación con la puntuación
+    const puntuacion = examData.score.toFixed(2);
+    const maxPuntos = examData.maxScore;
+    alert(`¡Examen enviado correctamente al profesor!\n\nPuntuación: ${puntuacion} de ${maxPuntos} puntos\n\nRECORDATORIO: No olvides:\n1. Finalizar la grabación de pantalla\n2. Descargar el video\n3. Subirlo al ClassRoom`);
+    
+    // Deshabilitar el botón para evitar envíos múltiples
+    const submitBtn = Array.from(controlsArea.children).find(btn => btn.textContent.includes('Enviar Examen'));
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = `✓ Examen Enviado (${puntuacion}/${maxPuntos} pts)`;
+        submitBtn.style.backgroundColor = '#6c757d';
+    }
+}
+
+/**
+ * Función para recopilar los datos del examen para envío al profesor
+ * Puntuación: Bloque 1 = 0.5 pts/ejercicio, Bloque 3 = 0.8 pts/apartado
+ */
+function collectExamDataForTeacher() {
+    // Crear array de detailedResults en el formato que espera el backend (code2.gs)
+    const detailedResults = [];
+    let score = 0;
+    let questionNumber = 1;
+    
+    // Constantes de puntuación
+    const PUNTOS_BLOQUE1 = 0.5;  // 0.5 puntos por ejercicio del bloque 1
+    const PUNTOS_BLOQUE3 = 0.8;  // 0.8 puntos por apartado del bloque 3
+    
+    appState.generatedExercises.forEach((exercise, index) => {
+        // Determinar si es ejercicio del bloque 1 o bloque 3
+        const esBloque1 = exercise.bloque === 1;
+        
+        if (esBloque1) {
+            // === BLOQUE 1: Cargas simples (0.5 pts) ===
+            const userAnswer = document.getElementById(`answer-${index}`)?.value || '';
+            const correctAnswer = parseFloat(exercise.resultado.toFixed(2));
+            const isCorrect = userAnswer && Math.abs(parseFloat(userAnswer) - correctAnswer) < 1;
+            
+            detailedResults.push({
+                questionNumber: questionNumber++,
+                question: `Parte A - Ej.${index + 1} - Carga Simple`,
+                userAnswer: userAnswer ? `${userAnswer} W` : 'Sin respuesta',
+                correctAnswer: `${correctAnswer} W`,
+                resolution: exercise.solucion.replace(/\n/g, ' ').substring(0, 200) + '...',
+                isCorrect: isCorrect,
+                puntos: PUNTOS_BLOQUE1
+            });
+            if (isCorrect) score += PUNTOS_BLOQUE1;
+            
+        } else {
+            // === BLOQUE 3: Edificios con LGA (0.8 pts por apartado) ===
+            // Obtener respuestas del usuario
+            const userPT = document.getElementById(`pt-${index}`)?.value || '';
+            const userIntensidad = document.getElementById(`intensidad-${index}`)?.value || '';
+            const userFusible = document.getElementById(`fusible-${index}`)?.value || '';
+            const userCalibre = document.getElementById(`calibre-${index}`)?.value || '';
+            const userSeccionLGA = document.getElementById(`seccion-lga-${index}`)?.value || '';
+            
+            // Obtener respuestas correctas
+            const correctPT = parseFloat(exercise.resultado.toFixed(2));
+            const correctIntensidad = parseFloat(exercise.cgpInfo.intensidad);
+            const correctFusible = exercise.fusibleInfo.fusible;
+            const correctCalibre = exercise.cgpInfo.calibre;
+            const seccionLGAMatch = exercise.solucion.match(/Sección adoptada \(la mayor\): ([\d,]+) mm²/);
+            const correctSeccionLGA = seccionLGAMatch ? parseFloat(seccionLGAMatch[1]) : (exercise.conductorInfo ? exercise.conductorInfo.seccion : 0);
+            
+            // Extraer datos adicionales del ejercicio para los cálculos detallados
+            const factorPotencia = exercise.factorPotencia || 0.9;
+            const longitudLGA = exercise.longitudLGA || 30;
+            const intensidad110 = correctIntensidad * 1.1;
+            
+            // Calcular número de ejercicio B (restando los del bloque 1)
+            const numEjBloque1 = appState.generatedExercises.filter(e => e.bloque === 1).length;
+            const ejBNum = index - numEjBloque1 + 1;
+            
+            // Verificar respuestas correctas
+            const ptCorrect = userPT && Math.abs(parseFloat(userPT) - correctPT) < 1;
+            const intensidadCorrect = userIntensidad && Math.abs(parseFloat(userIntensidad) - correctIntensidad) < 1;
+            const fusibleCorrect = userFusible && parseFloat(userFusible) === correctFusible;
+            const calibreCorrect = userCalibre && parseFloat(userCalibre) === correctCalibre;
+            const seccionCorrect = userSeccionLGA && parseFloat(userSeccionLGA) === correctSeccionLGA;
+            
+            // Crear entrada para PT con cálculo detallado
+            detailedResults.push({
+                questionNumber: questionNumber++,
+                question: `Parte B - Ej.${ejBNum} - Potencia Total (PT)`,
+                userAnswer: userPT ? `${userPT} W` : 'Sin respuesta',
+                correctAnswer: `${correctPT} W`,
+                resolution: `PT = PH + PSG + PLC + PG + PVE = ${correctPT} W`,
+                isCorrect: ptCorrect,
+                puntos: PUNTOS_BLOQUE3
+            });
+            if (ptCorrect) score += PUNTOS_BLOQUE3;
+            
+            // Crear entrada para Intensidad con cálculo detallado
+            detailedResults.push({
+                questionNumber: questionNumber++,
+                question: `Parte B - Ej.${ejBNum} - Intensidad calculada`,
+                userAnswer: userIntensidad ? `${userIntensidad} A` : 'Sin respuesta',
+                correctAnswer: `${correctIntensidad} A`,
+                resolution: `I = P/(√3×U×cosφ) = ${correctPT}/(1.732×400×${factorPotencia}) = ${correctIntensidad} A`,
+                isCorrect: intensidadCorrect,
+                puntos: PUNTOS_BLOQUE3
+            });
+            if (intensidadCorrect) score += PUNTOS_BLOQUE3;
+            
+            // Crear entrada para Fusible con cálculo detallado
+            detailedResults.push({
+                questionNumber: questionNumber++,
+                question: `Parte B - Ej.${ejBNum} - Fusible CGP`,
+                userAnswer: userFusible ? `${userFusible} A` : 'Sin respuesta',
+                correctAnswer: `${correctFusible} A`,
+                resolution: `Fusible ≥ I×1.1 = ${correctIntensidad}×1.1 = ${intensidad110.toFixed(2)} A → Normalizado: ${correctFusible} A`,
+                isCorrect: fusibleCorrect,
+                puntos: PUNTOS_BLOQUE3
+            });
+            if (fusibleCorrect) score += PUNTOS_BLOQUE3;
+            
+            // Crear entrada para Calibre con cálculo detallado
+            detailedResults.push({
+                questionNumber: questionNumber++,
+                question: `Parte B - Ej.${ejBNum} - Calibre CGP`,
+                userAnswer: userCalibre ? `${userCalibre} A` : 'Sin respuesta',
+                correctAnswer: `${correctCalibre} A`,
+                resolution: `Calibre ≥ Fusible (${correctFusible} A) → Normalizado: ${correctCalibre} A`,
+                isCorrect: calibreCorrect,
+                puntos: PUNTOS_BLOQUE3
+            });
+            if (calibreCorrect) score += PUNTOS_BLOQUE3;
+            
+            // Crear entrada para Sección LGA con cálculo detallado
+            detailedResults.push({
+                questionNumber: questionNumber++,
+                question: `Parte B - Ej.${ejBNum} - Sección LGA`,
+                userAnswer: userSeccionLGA ? `${userSeccionLGA} mm²` : 'Sin respuesta',
+                correctAnswer: `${correctSeccionLGA} mm²`,
+                resolution: `Mayor de: Sección por intensidad (Fusible=${correctFusible}A) y Sección por c.d.t. (L=${longitudLGA}m) → ${correctSeccionLGA} mm²`,
+                isCorrect: seccionCorrect,
+                puntos: PUNTOS_BLOQUE3
+            });
+            if (seccionCorrect) score += PUNTOS_BLOQUE3;
+        }
+    });
+    
+    // Calcular totales
+    const numBloque1 = appState.generatedExercises.filter(e => e.bloque === 1).length;
+    const numBloque3 = appState.generatedExercises.filter(e => e.bloque === 3).length;
+    const totalQuestions = numBloque1 + (numBloque3 * 5); // Bloque 1: 1 pregunta, Bloque 3: 5 preguntas
+    const maxScore = (numBloque1 * PUNTOS_BLOQUE1) + (numBloque3 * 5 * PUNTOS_BLOQUE3); // 4×0.5 + 2×5×0.8 = 10
+    
+    const examData = {
+        timestamp: new Date().toISOString(),
+        studentName: appState.currentStudent,
+        studentEmail: appState.currentStudent.replace(/\s+/g, '.').toLowerCase() + '@alumno.edu',
+        testType: 'Examen_ITC-BT-10_Completo',
+        language: 'es',
+        score: parseFloat(score.toFixed(2)),
+        totalQuestions: totalQuestions,
+        maxScore: maxScore,
+        passed: score >= (maxScore * 0.5), // Aprobado si tiene 50% o más (5 puntos)
+        detailedResults: detailedResults
+    };
+    
+    return examData;
+}
+
+/**
+ * Función para enviar datos del examen a Google Sheets
+ */
+async function sendExamToGoogleSheets(examData) {
+    if (!GOOGLE_SHEETS_CONFIG.ENABLED) {
+        console.log('❌ Google Sheets reporting is DISABLED');
+        if (GOOGLE_SHEETS_CONFIG.DEBUG_MODE) {
+            alert('Google Sheets está deshabilitado. Contacta con el profesor.');
+        }
+        return;
+    }
+    
+    if (!GOOGLE_SHEETS_CONFIG.WEB_APP_URL) {
+        console.log('❌ WEB_APP_URL not configured');
+        alert('Error de configuración. Contacta con el profesor.');
+        return;
+    }
+    
+    try {
+        if (GOOGLE_SHEETS_CONFIG.DEBUG_MODE) {
+            console.log('📤 Enviando datos del examen a Google Sheets...', examData);
+        }
+        
+        // El payload ya viene en el formato correcto desde collectExamDataForTeacher()
+        // con: studentName, testType, correctCount, exercises[]
+        const response = await fetch(GOOGLE_SHEETS_CONFIG.WEB_APP_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(examData),
+            mode: 'no-cors' // Necesario para Google Apps Script
+        });
+        
+        console.log('✅ Examen enviado a Google Sheets correctamente');
+        
+        if (GOOGLE_SHEETS_CONFIG.DEBUG_MODE) {
+            showNotification('✅ Examen enviado correctamente', 'success');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error enviando examen a Google Sheets:', error);
+        if (GOOGLE_SHEETS_CONFIG.DEBUG_MODE) {
+            showNotification('❌ Error enviando examen: ' + error.message, 'error');
+        }
+    }
+}
+
+/**
+ * Función para mostrar notificaciones visuales al usuario
+ */
+function showNotification(message, type = 'info') {
+    // Crear elemento de notificación
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        z-index: 10000;
+        max-width: 300px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    `;
+    
+    // Configurar estilo según el tipo
+    switch (type) {
+        case 'success':
+            notification.style.backgroundColor = '#28a745';
+            break;
+        case 'error':
+            notification.style.backgroundColor = '#dc3545';
+            break;
+        case 'warning':
+            notification.style.backgroundColor = '#ffc107';
+            notification.style.color = '#000';
+            break;
+        default:
+            notification.style.backgroundColor = '#007bff';
+    }
+    
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    // Remover automáticamente después de 5 segundos
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 5000);
+}
+
+/**
+ * Función principal para generar ejercicios según el bloque
+ * @param {number} block - Número del bloque (1, 2 o 3)
+ * @returns {Object} Objeto con enunciado, solución y resultado del ejercicio
+ */
+function generateExercise(block) {
+    let exercise;
+    let unique = false;
+    const existingEnunciados = appState.generatedExercises.map(ex => ex.enunciado);
+
+    // Bucle para evitar ejercicios repetidos en la misma página
+    while (!unique) {
+        if (block === 1) {
+            exercise = generarCargaSimple(); // Ejercicios simples
+        } else if (block === 2) {
+            exercise = generarEdificioCompleto(false); // Edificios sin LGA
+        } else { // Bloque 3
+            exercise = generarEdificioCompleto(true); // Edificios con LGA
+        }
+        
+        // Verificar que el enunciado no esté repetido
+        if (!existingEnunciados.includes(exercise.enunciado)) {
+            unique = true;
+        }
+    }
+    return exercise;
+}
+
+// ================================================================
+// SECCIÓN 4: GENERADOR DE EJERCICIOS - ITC-BT-10
+// ================================================================
+
+/**
+ * Esta sección contiene toda la lógica para generar ejercicios automáticamente
+ * basados en la normativa ITC-BT-10 para previsión de cargas eléctricas
+ */
+
+// ================================================================
+// SUBSECCIÓN 4.1: BASES DE DATOS Y CONSTANTES NORMATIVAS
+// ================================================================
+
+/**
+ * Datos de ascensores normalizados según clasificación ITA
+ * Cada tipo tiene una potencia específica en Watts
+ */
+const DATOS_ASCENSORES = {
+    "ITA-1": { potencia: 4500 },   // Ascensor pequeño
+    "ITA-2": { potencia: 7500 },   // Ascensor mediano
+    "ITA-3": { potencia: 11500 },  // Ascensor grande
+    "ITA-4": { potencia: 18500 },  // Ascensor muy grande
+    "ITA-5": { potencia: 29500 },  // Ascensor industrial pequeño
+    "ITA-6": { potencia: 46000 }   // Ascensor industrial grande
+};
+
+/**
+ * Descripción de métodos de instalación según ITC-BT-19
+ * Define cómo se instalan los conductores eléctricos
+ */
+const methodDesc = {
+    'B1': [
+        'Conductors unipolars aïllats en tubs en muntatge superficial o encastats en obra',
+        'Conductors unipolars aïllats en sobre paret de fusta o separats a una distància inferior a 0,3 vegades el diàmetre del tub',
+        'Conductors unipolars aïllats en conductes de secció no circular sobre paret de fusta',
+        'Conductors unipolars aïllats en conductes encastats en paret d\'obra',
+        'Cables unipolars o multiconductors en buits d\'obra de fàbrica',
+        'Conductors unipolars aïllats en tubs dins de buits d\'obra de fàbrica',
+        'Conductors unipolars aïllats en conductes de secció no circular en buits d\'obra de fàbrica',
+        'Conductors unipolars aïllats o cables unipolars en canal protectora fixades a una paret de fusta o encastades en el sòl',
+        'Cables uni o multiconductors en falsos sostres o sostres suspesos',
+        'Conductors unipolars aïllats en canal protectora suspesa',
+        'Conductors unipolars aïllats en canals d\'obra ventilats',
+        'Cables uni o multiconductors en canals d\'obra ventilats',
+        'Conductors unipolars aïllats o cables unipolars dins de sòcols acanalats'
+    ],
+    'D': 'Cables multiconductors enterrats sota tub', // Método para cables enterrados
+};
+
+/**
+ * Tabla de ampacidad según ITC-BT-19
+ * Define la intensidad máxima que puede soportar cada sección de conductor
+ * Organizada por material (cobre/aluminio) y método de instalación
+ */
+const AMPACIDAD_ITC_BT_19 = {
+    "cobre": {
+        // Método B1: Conductores en tubos superficiales o empotrados
+        "B1": { 10: 57, 16: 77, 25: 100, 35: 124, 50: 151, 70: 193, 95: 234, 120: 272, 150: 313, 185: 356, 240: 419 },
+        // Método D: Cables enterrados
+        "D": { 10: 58, 16: 75, 25: 96, 35: 117, 50: 138, 70: 170, 95: 202, 120: 230, 150: 260, 185: 291, 240: 336, 300: 380 }
+    },
+    "aluminio": {
+        // Método B1: Conductores en tubos superficiales o empotrados
+        "B1": { 16: 60, 25: 75, 35: 93, 50: 113, 70: 145, 95: 177, 120: 205, 150: 237, 185: 271, 240: 320 },
+        // Método D: Cables enterrados
+        "D": { 16: 58, 25: 74, 35: 90, 50: 107, 70: 132, 95: 157, 120: 178, 150: 201, 185: 226, 240: 261, 300: 295 }
+    }
+};
+
+/**
+ * Coeficientes de simultaneidad para viviendas
+ * Array donde el índice representa el número de viviendas y el valor el coeficiente
+ */
+const COEFICIENTES_SIMULTANEIDAD = [1, 2, 3, 3.8, 4.6, 5.4, 6.2, 7, 7.8, 8.5, 9.2, 9.9, 10.6, 11.3, 11.9, 12.5, 13.1, 13.7, 14.3, 14.8, 15.3];
+
+/**
+ * Calibres de CGP (Cuadro General de Protección) normalizados en Amperios
+ * Estos son los valores estándar disponibles comercialmente
+ */
+const CALIBRES_CGP_NORMALIZADOS = [40, 63, 80, 100, 160, 250, 400];
+
+/**
+ * Fusibles de CGP normalizados en Amperios
+ * Valores estándar de fusibles disponibles comercialmente
+ */
+const FUSIBLES_CGP_NORMALIZADOS = [16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 335, 400];
+
+// Potencias mínimas según la normativa ITC-BT-10
+const POTENCIA_MIN_BASICA = 5750;      // Watts para electrificación básica
+const POTENCIA_MIN_ELEVADA = 9200;     // Watts para electrificación elevada
+const MIN_LOCAL_GARAJE = 3450;         // Potencia mínima para locales y garajes
+
+// Potencias por superficie según tipo de uso
+const W_POR_M2_LOCAL = 100;            // Watts por m² para locales comerciales
+const W_POR_M2_GARAJE_NAT = 10;        // Watts por m² para garajes con ventilación natural
+const W_POR_M2_GARAJE_FOR = 20;        // Watts por m² para garajes con ventilación forzada
+const POTENCIA_RECARGA_VE = 3680;      // Watts por punto de recarga de vehículo eléctrico
+
+// Propiedades eléctricas de los conductores
+const CONDUCTIVIDAD_COBRE = 45.49;     // Conductividad del cobre en m/Ω·mm²
+const CONDUCTIVIDAD_ALUMINIO = 27.8;   // Conductividad del aluminio en m/Ω·mm²
+
+// Límites técnicos
+const MAX_CAIDA_TENSION_LGA = 0.5;     // Máxima caída de tensión admisible en LGA (%)
+
+// ================================================================
+// SUBSECCIÓN 4.2: FUNCIONES AUXILIARES
+// ================================================================
+
+/**
+ * Genera un número entero aleatorio entre min y max (inclusive)
+ * @param {number} min - Valor mínimo
+ * @param {number} max - Valor máximo
+ * @returns {number} Número entero aleatorio
+ */
+function randInt(min, max) { 
+    return Math.floor(Math.random() * (max - min + 1)) + min; 
+}
+
+/**
+ * Selecciona un elemento aleatorio de un array
+ * @param {Array} arr - Array del cual seleccionar
+ * @returns {*} Elemento aleatorio del array
+ */
+function randChoice(arr) { 
+    return arr[Math.floor(Math.random() * arr.length)]; 
+}
+
+/**
+ * Obtiene el coeficiente de simultaneidad para un número determinado de viviendas
+ * Según la tabla normativa de la ITC-BT-10
+ * @param {number} n - Número de viviendas
+ * @returns {number} Coeficiente de simultaneidad
+ */
+function getCoefSimultaneidad(n) {
+    if (n <= 0) return 0;
+    if (n <= 21) return COEFICIENTES_SIMULTANEIDAD[n - 1];
+    // Para más de 21 viviendas, se continúa con incremento de 0.5
+    return 15.3 + (n - 21) * 0.5;
+}
+
+/**
+ * Obtiene las secciones normalizadas disponibles para un material y método específico
+ * @param {string} material - 'cobre' o 'aluminio'
+ * @param {string} metodo - Método de instalación ('B1', 'D', etc.)
+ * @returns {Array} Array de secciones disponibles ordenadas de menor a mayor
+ */
+function getSeccionesNormalizadas(material, metodo) {
+    const tabla = AMPACIDAD_ITC_BT_19[material]?.[metodo];
+    if (!tabla) return [];
+    return Object.keys(tabla).map(s => parseInt(s)).sort((a, b) => a - b);
+}
+
+/**
+ * Selecciona la primera sección normalizada mayor o igual a la calculada
+ * @param {number} seccionCalculada - Sección calculada matemáticamente
+ * @param {string} material - Material del conductor
+ * @param {string} metodo - Método de instalación
+ * @returns {number} Sección normalizada seleccionada
+ */
+function seleccionarSeccionNormalizada(seccionCalculada, material, metodo) {
+    const secciones = getSeccionesNormalizadas(material, metodo);
+    for (let seccion of secciones) {
+        if (seccion >= seccionCalculada) {
+            return seccion;
+        }
+    }
+    // Si no se encuentra ninguna sección mayor, devolver la mayor disponible
+    return secciones[secciones.length - 1] || seccionCalculada;
+}
+
+// ================================================================
+// SUBSECCIÓN 4.3: FUNCIONES PARA CÁLCULOS DE CGP Y CONDUCTORES
+// ================================================================
+
+/**
+ * Selecciona el calibre de CGP normalizado según la potencia
+ * @param {number} potenciaW - Potencia en Watts
+ * @param {number} tension - Tensión de alimentación (defecto: 400V trifásica)
+ * @param {number} cosfi - Factor de potencia (defecto: 0.9)
+ * @returns {Object} Información completa del calibre CGP seleccionado
+ */
+function getCalibreCGP(potenciaW, tension = 400, cosfi = 0.9) {
+    // Calcular la intensidad nominal para sistema trifásico
+    const intensidad = potenciaW / (Math.sqrt(3) * tension * cosfi);
+    
+    // Encontrar el calibre normalizado inmediatamente superior
+    for (let calibre of CALIBRES_CGP_NORMALIZADOS) {
+        if (calibre >= intensidad) {
+            return {
+                intensidad: intensidad.toFixed(2),
+                calibre: calibre,
+                potenciaW: potenciaW,
+                tension: tension,
+                cosfi: cosfi
+            };
+        }
+    }
+    
+    // Si ningún calibre es suficiente, devolver el mayor disponible
+    return {
+        intensidad: intensidad.toFixed(2),
+        calibre: CALIBRES_CGP_NORMALIZADOS[CALIBRES_CGP_NORMALIZADOS.length - 1],
+        potenciaW: potenciaW,
+        tension: tension,
+        cosfi: cosfi,
+        warning: "Potencia superior al calibre máximo normalizado"
+    };
+}
+
+/**
+ * Selecciona el fusible de CGP normalizado según la potencia
+ * @param {number} potenciaW - Potencia en Watts
+ * @param {number} tension - Tensión de alimentación (defecto: 400V trifásica)
+ * @param {number} cosfi - Factor de potencia (defecto: 0.9)
+ * @returns {Object} Información completa del fusible CGP seleccionado
+ */
+function getFusibleCGP(potenciaW, tension = 400, cosfi = 0.9) {
+    // Calcular la intensidad nominal para sistema trifásico
+    const intensidad = potenciaW / (Math.sqrt(3) * tension * cosfi);
+    
+    // Encontrar el fusible normalizado inmediatamente superior
+    for (let fusible of FUSIBLES_CGP_NORMALIZADOS) {
+        if (fusible >= intensidad) {
+            return {
+                intensidad: intensidad.toFixed(2),
+                fusible: fusible,
+                potenciaW: potenciaW,
+                tension: tension,
+                cosfi: cosfi
+            };
+        }
+    }
+    
+    // Si ningún fusible es suficiente, devolver el mayor disponible
+    return {
+        intensidad: intensidad.toFixed(2),
+        fusible: FUSIBLES_CGP_NORMALIZADOS[FUSIBLES_CGP_NORMALIZADOS.length - 1],
+        potenciaW: potenciaW,
+        tension: tension,
+        cosfi: cosfi,
+        warning: "Potencia superior al fusible máximo normalizado"
+    };
+}
+
+/**
+ * Genera una tabla HTML con los calibres CGP normalizados
+ * Muestra todos los calibres disponibles y resalta el seleccionado
+ * @param {number} potenciaW - Potencia para calcular el calibre (opcional)
+ * @param {number} tension - Tensión del sistema (defecto: 400V)
+ * @param {number} cosfi - Factor de potencia (defecto: 0.9)
+ * @returns {string} HTML de la tabla completa
+ */
+function generarTablaCalibresCGP(potenciaW = null, tension = 400, cosfi = 0.9) {
+    let html = `
+        <div class="cgp-info">
+            <h4>📋 Tabla de Calibres CGP Normalizados</h4>
+            <p><strong>Tensión:</strong> ${tension} V (trifásica) | <strong>cos φ:</strong> ${cosfi}</p>
+            <table class="cgp-table">
+                <thead>
+                    <tr>
+                        <th>Calibre CGP (A)</th>
+                        <th>Potencia Máxima (kW)</th>
+                        <th>Potencia Máxima (W)</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+    
+    // Determinar qué calibre está seleccionado (si se proporciona potencia)
+    const calibreSeleccionado = potenciaW ? getCalibreCGP(potenciaW, tension, cosfi).calibre : null;
+    
+    // Generar filas para cada calibre normalizado
+    CALIBRES_CGP_NORMALIZADOS.forEach(calibre => {
+        const potenciaMaxW = calibre * Math.sqrt(3) * tension * cosfi;
+        const potenciaMaxKW = (potenciaMaxW / 1000).toFixed(1);
+        const isSelected = calibre === calibreSeleccionado;
+        
+        html += `
+            <tr${isSelected ? ' class="cgp-selected"' : ''}>
+                <td>${calibre} A${isSelected ? ' ✓' : ''}</td>
+                <td>${potenciaMaxKW} kW</td>
+                <td>${potenciaMaxW.toFixed(0)} W</td>
+            </tr>
+        `;
+    });
+    
+    html += `
+                </tbody>
+            </table>
+    `;
+    
+    // Añadir información específica si se proporciona una potencia
+    if (potenciaW) {
+        const cgpInfo = getCalibreCGP(potenciaW, tension, cosfi);
+        html += `
+            <div style="margin-top: 15px; padding: 10px; background-color: #e7f3ff; border-left: 4px solid #005a9c;">
+                <strong>Para una potencia de ${potenciaW.toFixed(0)} W:</strong><br>
+                • Intensidad calculada: ${cgpInfo.intensidad} A<br>
+                • Calibre CGP requerido: <strong>${cgpInfo.calibre} A</strong>
+                ${cgpInfo.warning ? `<br>• ⚠️ ${cgpInfo.warning}` : ''}
+            </div>
+        `;
+    }
+    
+    html += `</div>`;
+    return html;
+}
+
+// Función para generar la tabla de fusibles CGP normalizados
+function generarTablaFusiblesCGP(potenciaW = null, tension = 400, cosfi = 0.9) {
+    let html = `
+        <div class="cgp-info">
+            <h4>🔧 Tabla de Fusibles CGP Normalizados</h4>
+            <p><strong>Tensión:</strong> ${tension} V (trifásica) | <strong>cos φ:</strong> ${cosfi}</p>
+            <table class="cgp-table">
+                <thead>
+                    <tr>
+                        <th>Fusible CGP (A)</th>
+                        <th>Potencia Máxima (kW)</th>
+                        <th>Potencia Máxima (W)</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+    
+    const fusibleSeleccionado = potenciaW ? getFusibleCGP(potenciaW, tension, cosfi).fusible : null;
+    
+    FUSIBLES_CGP_NORMALIZADOS.forEach(fusible => {
+        const potenciaMaxW = fusible * Math.sqrt(3) * tension * cosfi;
+        const potenciaMaxKW = (potenciaMaxW / 1000).toFixed(1);
+        const isSelected = fusible === fusibleSeleccionado;
+        
+        html += `
+            <tr${isSelected ? ' class="cgp-selected"' : ''}>
+                <td>${fusible} A${isSelected ? ' ✓' : ''}</td>
+                <td>${potenciaMaxKW} kW</td>
+                <td>${potenciaMaxW.toFixed(0)} W</td>
+            </tr>
+        `;
+    });
+    
+    html += `
+                </tbody>
+            </table>
+    `;
+    
+    if (potenciaW) {
+        const fusibleInfo = getFusibleCGP(potenciaW, tension, cosfi);
+        html += `
+            <div style="margin-top: 15px; padding: 10px; background-color: #fff3cd; border-left: 4px solid #ffc107;">
+                <strong>Para una potencia de ${potenciaW.toFixed(0)} W:</strong><br>
+                • Intensidad calculada: ${fusibleInfo.intensidad} A<br>
+                • Fusible CGP requerido: <strong>${fusibleInfo.fusible} A</strong>
+                ${fusibleInfo.warning ? `<br>• ⚠️ ${fusibleInfo.warning}` : ''}
+            </div>
+        `;
+    }
+    
+    html += `</div>`;
+    return html;
+}
+
+// Función para generar tabla combinada de calibres y fusibles CGP
+function generarTablaCGPCompleta(potenciaW = null, tension = 400, cosfi = 0.9) {
+    return generarTablaCalibresCGP(potenciaW, tension, cosfi) + generarTablaFusiblesCGP(potenciaW, tension, cosfi);
+}
+
+// --- FUNCIONES PARA AMPACIDAD ITC-BT-19 ---
+
+// Función para obtener la sección mínima del conductor según intensidad
+function getSeccionConductor(intensidad, material = 'cobre', metodo = 'B1') {
+    const tabla = AMPACIDAD_ITC_BT_19[material]?.[metodo];
+    if (!tabla) {
+        return {
+            error: `Combinación no válida: material=${material}, método=${metodo}`
+        };
+    }
+    
+    // Buscar la sección mínima que soporte la intensidad requerida
+    for (const [seccion, intensidadMax] of Object.entries(tabla)) {
+        if (intensidadMax >= intensidad) {
+            return {
+                seccion: parseInt(seccion),
+                intensidadMax: intensidadMax,
+                intensidadCalculada: intensidad,
+                material: material,
+                metodo: metodo,
+                descripcion: methodDesc[metodo] || 'Método no especificado'
+            };
+        }
+    }
+    
+    // Si ninguna sección es suficiente, devolver la mayor disponible con advertencia
+    const secciones = Object.keys(tabla).map(s => parseInt(s)).sort((a, b) => b - a);
+    const seccionMaxima = secciones[0];
+    return {
+        seccion: seccionMaxima,
+        intensidadMax: tabla[seccionMaxima],
+        intensidadCalculada: intensidad,
+        material: material,
+        metodo: metodo,
+        descripcion: methodDesc[metodo] || 'Método no especificado',
+        warning: `Intensidad requerida (${intensidad}A) superior a la máxima disponible (${tabla[seccionMaxima]}A)`
+    };
+}
+
+// Función para generar tabla de ampacidad ITC-BT-19
+function generarTablaAmpacidad(intensidad = null, material = 'cobre', metodo = 'B1') {
+    const tabla = AMPACIDAD_ITC_BT_19[material]?.[metodo];
+    if (!tabla) {
+        return `<div class="cgp-info"><p>⚠️ Combinación no válida: ${material} - ${metodo}</p></div>`;
+    }
+    
+    const seccionSeleccionada = intensidad ? getSeccionConductor(intensidad, material, metodo).seccion : null;
+    const descripcionMetodo = Array.isArray(methodDesc[metodo]) ? methodDesc[metodo][0] : methodDesc[metodo];
+    
+    let html = `
+        <div class="cgp-info">
+            <h4>📐 Tabla de Ampacidad ITC-BT-19</h4>
+            <p><strong>Material:</strong> ${material.charAt(0).toUpperCase() + material.slice(1)} | <strong>Método:</strong> ${metodo}</p>
+            <p><em>${descripcionMetodo}</em></p>
+            <table class="cgp-table">
+                <thead>
+                    <tr>
+                        <th>Sección (mm²)</th>
+                        <th>Intensidad Máxima (A)</th>
+                        <th>Potencia Máxima (kW)</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+    
+    Object.entries(tabla).forEach(([seccion, intensidadMax]) => {
+        const potenciaMaxKW = (intensidadMax * Math.sqrt(3) * 400 * 0.9 / 1000).toFixed(1);
+        const isSelected = parseInt(seccion) === seccionSeleccionada;
+        
+        html += `
+            <tr${isSelected ? ' class="cgp-selected"' : ''}>
+                <td>${seccion} mm²${isSelected ? ' ✓' : ''}</td>
+                <td>${intensidadMax} A</td>
+                <td>${potenciaMaxKW} kW</td>
+            </tr>
+        `;
+    });
+    
+    html += `
+                </tbody>
+            </table>
+    `;
+    
+    if (intensidad) {
+        const seccionInfo = getSeccionConductor(intensidad, material, metodo);
+        html += `
+            <div style="margin-top: 15px; padding: 10px; background-color: #e8f5e8; border-left: 4px solid #28a745;">
+                <strong>Para una intensidad de ${intensidad} A:</strong><br>
+                • Sección mínima requerida: <strong>${seccionInfo.seccion} mm²</strong><br>
+                • Intensidad máxima admisible: ${seccionInfo.intensidadMax} A<br>
+                • Material: ${seccionInfo.material}<br>
+                • Método de instalación: ${seccionInfo.metodo}
+                ${seccionInfo.warning ? `<br>• ⚠️ ${seccionInfo.warning}` : ''}
+            </div>
+        `;
+    }
+    
+    html += `</div>`;
+    return html;
+}
+
+// Función para generar información completa de conductores
+function generarInfoCompleta(potenciaW, tension = 400, cosfi = 0.9, material = 'cobre', metodo = 'B1') {
+    const intensidad = potenciaW / (Math.sqrt(3) * tension * cosfi);
+    const cgpInfo = getCalibreCGP(potenciaW, tension, cosfi);
+    const fusibleInfo = getFusibleCGP(potenciaW, tension, cosfi);
+    const seccionInfo = getSeccionConductor(intensidad, material, metodo);
+    
+    return {
+        potencia: potenciaW,
+        intensidad: intensidad.toFixed(2),
+        cgp: cgpInfo,
+        fusible: fusibleInfo,
+        conductor: seccionInfo,
+        tablas: {
+            cgp: generarTablaCGPCompleta(potenciaW, tension, cosfi),
+            ampacidad: generarTablaAmpacidad(intensidad, material, metodo)
+        }
+    };
+}
+
+// --- GENERADOR BLOQUE 1: CARGAS SIMPLES ---
+function generarCargaSimple() {
+    const tipo = randChoice(['vivienda', 'local', 'garaje']);
+    let enunciado = '', solucion = '', resultado = 0;
+
+    if (tipo === 'vivienda') {
+        const superficie = randInt(50, 250);
+        const tieneAC = Math.random() > 0.6;
+        const tieneCalefaccion = Math.random() > 0.6;
+        let esElevada = superficie > 160 || tieneAC || tieneCalefaccion;
+        
+        enunciado = `Calcular la previsión de carga mínima para una vivienda de ${superficie} m²`;
+        if (tieneAC) enunciado += ', con previsión de aire acondicionado';
+        if (tieneCalefaccion) enunciado += ', con previsión de calefacción eléctrica';
+        enunciado += '.';
+
+        solucion = `1. Determinar el grado de electrificación:\n`;
+        let motivos = [];
+        if (superficie > 160) motivos.push(`La superficie (${superficie} m²) es superior a 160 m².`);
+        if (tieneAC) motivos.push(`Se ha previsto instalación de aire acondicionado.`);
+        if (tieneCalefaccion) motivos.push(`Se ha previsto instalación de calefacción eléctrica.`);
+        
+        if (esElevada) {
+            resultado = POTENCIA_MIN_ELEVADA;
+            solucion += motivos.map(m => `   - ${m}`).join('\n') + '\n';
+            solucion += `2. Conclusión: Al cumplirse al menos una condición, el grado es Electrificación Elevada.\n`;
+            solucion += `3. Asignar potencia mínima: La potencia a prever es ${resultado} W.`;
+        } else {
+            resultado = POTENCIA_MIN_BASICA;
+            solucion += `   - No se cumple ninguna condición para electrificación elevada.\n`;
+            solucion += `2. Conclusión: El grado es Electrificación Básica.\n`;
+            solucion += `3. Asignar potencia mínima: La potencia a prever es ${resultado} W.`;
+        }
+    } else if (tipo === 'local') {
+        const superficie = randInt(20, 150);
+        enunciado = `Calcular la previsión de carga para un local comercial de ${superficie} m².`;
+        let cargaCalculada = superficie * W_POR_M2_LOCAL;
+        resultado = Math.max(cargaCalculada, MIN_LOCAL_GARAJE);
+
+        solucion = `1. Calcular potencia según superficie (${W_POR_M2_LOCAL} W/m²):\n`;
+        solucion += `   P = ${superficie} m² × ${W_POR_M2_LOCAL} W/m² = ${cargaCalculada} W.\n`;
+        solucion += `2. Comparar con el mínimo por local comercial:\n`;
+        solucion += `   Mínimo reglamentario = ${MIN_LOCAL_GARAJE} W.\n`;
+        solucion += `3. Seleccionar el valor mayor:\n`;
+        solucion += `   max(${cargaCalculada} W, ${MIN_LOCAL_GARAJE} W) = ${resultado} W.`;
+    } else { // Garaje
+        const superficie = randInt(80, 500);
+        const ventilacion = randChoice(['natural', 'forzada']);
+        const W_m2 = (ventilacion === 'natural') ? W_POR_M2_GARAJE_NAT : W_POR_M2_GARAJE_FOR;
+        enunciado = `Calcular la previsión de carga para un garaje de ${superficie} m² con ventilación ${ventilacion}.`;
+        let cargaCalculada = superficie * W_m2;
+        resultado = Math.max(cargaCalculada, MIN_LOCAL_GARAJE);
+        
+        solucion = `1. Calcular potencia según tipo de ventilación (${W_m2} W/m²):\n`;
+        solucion += `   P = ${superficie} m² × ${W_m2} W/m² = ${cargaCalculada} W.\n`;
+        solucion += `2. Comparar con el mínimo por garaje:\n`;
+        solucion += `   Mínimo reglamentario = ${MIN_LOCAL_GARAJE} W.\n`;
+        solucion += `3. Seleccionar el valor mayor:\n`;
+        solucion += `   max(${cargaCalculada} W, ${MIN_LOCAL_GARAJE} W) = ${resultado} W.`;
+    }
+    return { enunciado, solucion, resultado };
+}
+
+// --- GENERADOR BLOQUES 2 Y 3: EDIFICIOS COMPLETOS ---
+function generarEdificioCompleto(conLGA = false) {
+    let PT, enunciado, solucion, PH, PSG, PLC, PG, PVE;
+    let intentos = 0;
+    const maxIntentos = 50; // Evitar bucle infinito
+    
+    do {
+        intentos++;
+        enunciado = 'Calcular la carga total prevista para un edificio con las siguientes características:\n';
+        solucion = '';
+        
+        // 1. Viviendas (PH)
+        const n_basicas = randInt(5, 20);
+        const n_elevadas = randInt(2, 8);
+        const totalViviendas = n_basicas + n_elevadas;
+        const pTotalViv = (n_basicas * POTENCIA_MIN_BASICA) + (n_elevadas * POTENCIA_MIN_ELEVADA);
+        const pMediaViv = pTotalViv / totalViviendas;
+        const coefSimult = getCoefSimultaneidad(totalViviendas);
+        PH = pMediaViv * coefSimult;
+        enunciado += `- ${n_basicas} viviendas de electrificación básica.\n`;
+        enunciado += `- ${n_elevadas} viviendas de electrificación elevada.\n`;
+        solucion += `1. Carga de Viviendas (PH)\n`;
+        solucion += `   - P. media = ((${n_basicas} * ${POTENCIA_MIN_BASICA}) + (${n_elevadas} * ${POTENCIA_MIN_ELEVADA})) / ${totalViviendas} = ${pMediaViv.toFixed(2)} W.\n`;
+        solucion += `   - Coef. Simultaneidad (${totalViviendas} viv.) = ${coefSimult}.\n`;
+        solucion += `   - PH = ${pMediaViv.toFixed(2)} * ${coefSimult} = ${PH.toFixed(2)} W.\n\n`;
+
+        // 2. Servicios Generales (PSG)
+        const n_ascensores = randInt(1, 2);
+        const tipo_ascensor_key = randChoice(Object.keys(DATOS_ASCENSORES));
+        const ascensor = DATOS_ASCENSORES[tipo_ascensor_key];
+        const pAscensores = n_ascensores * ascensor.potencia;
+        const areaPortal = randInt(20, 50), areaEscalera = randInt(30, 80);
+        const pAlumbrado = (areaPortal * 8) + (areaEscalera * 4); // Fluorescencia
+        const n_plantas = randInt(3, 12);
+        const pGrupoPresion = (n_plantas <= 4) ? 1000 : 2000;
+        const pAuxiliares = 1000; // ICT
+        PSG = pAscensores + pAlumbrado + pGrupoPresion + pAuxiliares;
+        enunciado += `- Servicios generales: ${n_ascensores} ascensor(es) ${tipo_ascensor_key}, ${areaPortal} m² de portal, ${areaEscalera} m² de escalera, ${n_plantas} plantas.\n`;
+        solucion += `2. Carga de Servicios Generales (PSG) (FS=1)\n`;
+        solucion += `   - Ascensores: ${n_ascensores} * ${ascensor.potencia} W = ${pAscensores} W.\n`;
+        solucion += `   - Alumbrado: (${areaPortal}*8) + (${areaEscalera}*4) = ${pAlumbrado} W.\n`;
+        solucion += `   - Grupo presión: ${pGrupoPresion} W.\n`;
+        solucion += `   - Auxiliares: ${pAuxiliares} W.\n`;
+        solucion += `   - PSG = ${pAscensores} + ${pAlumbrado} + ${pGrupoPresion} + ${pAuxiliares} = ${PSG.toFixed(2)} W.\n\n`;
+
+        // 3. Locales Comerciales (PLC)
+        const n_locales = randInt(1, 3);
+        PLC = 0;
+        let localesTxt = '';
+        solucion += `3. Carga de Locales Comerciales (PLC) (FS=1)\n`;
+        for (let i = 0; i < n_locales; i++) {
+            const area = randInt(30, 100);
+            const cargaPorSuperficie = area * W_POR_M2_LOCAL;
+            const cargaLocal = Math.max(cargaPorSuperficie, MIN_LOCAL_GARAJE);
+            PLC += cargaLocal;
+            localesTxt += `${area} m²` + (i === n_locales - 1 ? '.\n' : ', ');
+            solucion += `   - Local ${i + 1} (${area} m²): ${area} × ${W_POR_M2_LOCAL} = ${cargaPorSuperficie} W → max(${cargaPorSuperficie}, ${MIN_LOCAL_GARAJE}) = ${cargaLocal} W.\n`;
+        }
+        enunciado += `- ${n_locales} locales comerciales de: ${localesTxt}`;
+        solucion += `   - PLC total = ${PLC.toFixed(2)} W.\n\n`;
+        
+        // 4. Garaje (PG)
+        const areaGaraje = randInt(200, 800);
+        const ventGaraje = randChoice(['natural', 'forzada']);
+        const W_m2_g = (ventGaraje === 'natural') ? W_POR_M2_GARAJE_NAT : W_POR_M2_GARAJE_FOR;
+        const cargaPorSuperficieGaraje = areaGaraje * W_m2_g;
+        PG = Math.max(cargaPorSuperficieGaraje, MIN_LOCAL_GARAJE);
+        enunciado += `- Garaje de ${areaGaraje} m² con ventilación ${ventGaraje}.\n`;
+        solucion += `4. Carga del Garaje (PG) (FS=1)\n`;
+        solucion += `   - Cálculo por superficie: ${areaGaraje} × ${W_m2_g} = ${cargaPorSuperficieGaraje} W.\n`;
+        solucion += `   - PG = max(${cargaPorSuperficieGaraje}, ${MIN_LOCAL_GARAJE}) = ${PG.toFixed(2)} W.\n\n`;
+
+        // 5. Vehículo Eléctrico (PVE)
+        const plazas_aparcamiento = totalViviendas + n_locales;
+        const plazas_recarga = Math.ceil(plazas_aparcamiento * 0.10);
+        const tieneSPL = Math.random() > 0.5;
+        const FS_VE = tieneSPL ? 0.3 : 1;
+        PVE = POTENCIA_RECARGA_VE * plazas_recarga * FS_VE;
+        enunciado += `- Recarga VE (${plazas_aparcamiento} plazas totales), ${tieneSPL ? 'con' : 'sin'} SPL.\n`;
+        solucion += `5. Carga Vehículo Eléctrico (PVE)\n`;
+        solucion += `   - Plazas totales: ${plazas_aparcamiento} plazas.\n`;
+        solucion += `   - Plazas recarga (10%): ${plazas_aparcamiento} * 0.10 = ${(plazas_aparcamiento * 0.10).toFixed(1)} → ${plazas_recarga} plazas (redondeado al entero superior).\n`;
+        solucion += `   - Factor simultaneidad ${tieneSPL ? 'con' : 'sin'} SPL: ${FS_VE}.\n`;
+        solucion += `   - PVE = ${POTENCIA_RECARGA_VE}W * ${plazas_recarga} plazas * ${FS_VE} = ${PVE.toFixed(2)} W.\n\n`;
+
+        // 6. Total y LGA
+        PT = PH + PSG + PLC + PG + PVE;
+        solucion += `6. Carga Total del Edificio (PT)\n`;
+        solucion += `   - PT = PH + PSG + PLC + PG + PVE\n`;
+        solucion += `   - PT = ${PH.toFixed(2)} + ${PSG.toFixed(2)} + ${PLC.toFixed(2)} + ${PG.toFixed(2)} + ${PVE.toFixed(2)}\n`;
+        solucion += `   - PT = ${PT.toFixed(2)} W = ${(PT/1000).toFixed(2)} kW.\n`;
+
+    } while (conLGA && PT > 252000 && intentos < maxIntentos);
+
+    const result = { 
+        enunciado, 
+        solucion, 
+        resultado: PT
+    };
+    
+    // Solo para el bloque 3: información sobre calibre, fusible CGP y conductor
+    if (conLGA) {
+        const longitudLGA = randInt(15, 50);
+        const materialConductor = 'cobre';
+        const sistemaInstalacion = 'B1';
+        const descripcionSistema = 'conductores unipolares aislados en tubos en montaje superficial o empotrados en obra';
+        const factorPotencia = (Math.random() * (1.0 - 0.8) + 0.8); // Entre 0.8 y 1.0
+        const factorPotenciaRedondeado = Math.round(factorPotencia * 100) / 100; // Redondear a 2 decimales
+        
+        // Calcular intensidad nominal
+        const intensidadCalculada = PT / (Math.sqrt(3) * 400 * factorPotenciaRedondeado);
+        const intensidad110 = intensidadCalculada * 1.1; // 110% de la intensidad calculada
+        
+        // PASO 1: Seleccionar fusible que cumpla con el 110% de la intensidad calculada
+        let fusibleSeleccionado = null;
+        for (let fusible of FUSIBLES_CGP_NORMALIZADOS) {
+            if (fusible >= intensidad110) {
+                fusibleSeleccionado = fusible;
+                break;
+            }
+        }
+        
+        // Si no se encuentra fusible adecuado, usar el mayor disponible
+        if (!fusibleSeleccionado) {
+            fusibleSeleccionado = FUSIBLES_CGP_NORMALIZADOS[FUSIBLES_CGP_NORMALIZADOS.length - 1];
+        }
+        
+        // PASO 2: Seleccionar calibre CGP que sea mayor o igual al fusible
+        let calibreCGPSeleccionado = null;
+        for (let calibre of CALIBRES_CGP_NORMALIZADOS) {
+            if (calibre >= fusibleSeleccionado) {
+                calibreCGPSeleccionado = calibre;
+                break;
+            }
+        }
+        
+        // Si no se encuentra calibre adecuado, usar el mayor disponible
+        if (!calibreCGPSeleccionado) {
+            calibreCGPSeleccionado = CALIBRES_CGP_NORMALIZADOS[CALIBRES_CGP_NORMALIZADOS.length - 1];
+        }
+        
+        const conductorInfo = getSeccionConductor(fusibleSeleccionado, 'cobre', 'B1');
+        
+        solucion += `\n7. Selección del Fusible y Calibre CGP\n`;
+        solucion += `   - Intensidad calculada: I = P / (√3 × U × cos φ) = ${PT.toFixed(0)} / (1.732 × 400 × ${factorPotenciaRedondeado}) = ${intensidadCalculada.toFixed(2)} A\n`;
+        solucion += `   - Intensidad mínima requerida (110%): ${intensidadCalculada.toFixed(2)} × 1.1 = ${intensidad110.toFixed(2)} A\n`;
+        solucion += `   7.1. Selección de fusible CGP:\n`;
+        solucion += `        * Fusibles normalizados disponibles: ${FUSIBLES_CGP_NORMALIZADOS.join(', ')} A\n`;
+        solucion += `        * Primer fusible ≥ ${intensidad110.toFixed(2)} A: ${fusibleSeleccionado} A\n`;
+        solucion += `        * Fusible CGP seleccionado: ${fusibleSeleccionado} A\n`;
+        solucion += `   7.2. Selección de calibre CGP:\n`;
+        solucion += `        * Calibres normalizados disponibles: ${CALIBRES_CGP_NORMALIZADOS.join(', ')} A\n`;
+        solucion += `        * Primer calibre ≥ fusible (${fusibleSeleccionado} A): ${calibreCGPSeleccionado} A\n`;
+        solucion += `        * Calibre CGP seleccionado: ${calibreCGPSeleccionado} A\n`;
+        solucion += `   - Verificación: Calibre CGP (${calibreCGPSeleccionado} A) ≥ Fusible (${fusibleSeleccionado} A) → ${calibreCGPSeleccionado >= fusibleSeleccionado ? 'CUMPLE' : 'NO CUMPLE'}\n`;
+        
+        solucion += `\n8. Selección de la Sección del Conductor (ITC-BT-19)\n`;
+        solucion += `   - Intensidad de referencia: ${fusibleSeleccionado} A (calibre del fusible CGP)\n`;
+        solucion += `   - Material del conductor: ${materialConductor.charAt(0).toUpperCase() + materialConductor.slice(1)}\n`;
+        solucion += `   - Método de instalación: ${sistemaInstalacion} (${descripcionSistema})\n`;
+        solucion += `   - Sección mínima requerida: ${conductorInfo.seccion} mm²\n`;
+        solucion += `   - Intensidad máxima admisible: ${conductorInfo.intensidadMax} A\n`;
+
+        enunciado += `- La LGA tiene una longitud de ${longitudLGA} metros.\n`;
+        enunciado += `- Material del conductor: ${materialConductor}.\n`;
+        enunciado += `- Sistema de instalación: ${descripcionSistema}.\n`;
+        enunciado += `- Factor de potencia del edificio: ${factorPotenciaRedondeado}.`;
+        
+        solucion += `\n9. Verificación del Sistema\n`;
+        solucion += `   - Fusible CGP: ${fusibleSeleccionado} A\n`;
+        solucion += `   - Calibre CGP: ${calibreCGPSeleccionado} A\n`;
+        solucion += `   - Sección conductor: ${conductorInfo.seccion} mm²\n`;
+        
+        solucion += `\n10. Cálculo de la Sección de la LGA\n`;
+        
+        // Cálculo por intensidad (ya calculado en paso 8)
+        const seccionPorIntensidad = conductorInfo.seccion;
+        solucion += `   10.1. Sección por intensidad (del paso 8): ${seccionPorIntensidad} mm²\n`;
+        
+        // Cálculo por caída de tensión
+        const conductividad = materialConductor === 'cobre' ? CONDUCTIVIDAD_COBRE : CONDUCTIVIDAD_ALUMINIO;
+        const potenciaKW = PT / 1000;
+        const tension = 400; // Tensión entre fases en V
+        const caidaTensionMaxima = MAX_CAIDA_TENSION_LGA / 100; // Convertir % a decimal
+        const caidaTensionVoltios = tension * caidaTensionMaxima;
+        
+        // Fórmula: S = (L × P) / (γ × ΔU × U)
+        // donde γ es la conductividad
+        const seccionCaidaTension = (longitudLGA * potenciaKW * 1000) / (conductividad * caidaTensionVoltios * tension);
+        
+        // Seleccionar sección normalizada de la tabla AMPACIDAD_ITC_BT_19
+        const seccionesDisponibles = getSeccionesNormalizadas(materialConductor, sistemaInstalacion);
+        const seccionNormalizada = seleccionarSeccionNormalizada(seccionCaidaTension, materialConductor, sistemaInstalacion);
+        
+        solucion += `   10.2. Cálculo por caída de tensión:\n`;
+        solucion += `        - Conductividad del ${materialConductor}: ${conductividad} m/Ω·mm²\n`;
+        solucion += `        - Caída de tensión máxima admisible: ${MAX_CAIDA_TENSION_LGA}% = ${caidaTensionVoltios.toFixed(1)} V\n`;
+        solucion += `        - Fórmula: S = (L × P) / (γ × ΔU × U)\n`;
+        solucion += `        - S = (${longitudLGA} × ${potenciaKW.toFixed(2)} × 1000) / (${conductividad} × ${caidaTensionVoltios.toFixed(1)} × ${tension})\n`;
+        solucion += `        - S calculada = ${seccionCaidaTension.toFixed(2)} mm²\n`;
+        solucion += `        - Secciones normalizadas disponibles (ITC-BT-19): ${seccionesDisponibles.join(', ')} mm²\n`;
+        solucion += `        - Primera sección normalizada ≥ ${seccionCaidaTension.toFixed(2)} mm²: ${seccionNormalizada} mm²\n`;
+        
+        // Selección de la mayor sección
+        const seccionFinal = Math.max(seccionPorIntensidad, seccionNormalizada);
+        solucion += `   10.3. Selección final:\n`;
+        solucion += `        - Sección por intensidad: ${seccionPorIntensidad} mm²\n`;
+        solucion += `        - Sección normalizada por caída de tensión: ${seccionNormalizada} mm²\n`;
+        solucion += `        - Sección adoptada (la mayor): ${seccionFinal} mm²\n`;
+        
+        // Verificación de la caída de tensión real
+        const caidaTensionReal = (longitudLGA * potenciaKW * 1000) / (conductividad * seccionFinal * tension);
+        const caidaTensionRealPorcentaje = (caidaTensionReal / tension) * 100;
+        solucion += `        - Verificación: ΔU real = ${caidaTensionReal.toFixed(2)} V = ${caidaTensionRealPorcentaje.toFixed(3)}% ${caidaTensionRealPorcentaje <= MAX_CAIDA_TENSION_LGA ? '≤' : '>'} ${MAX_CAIDA_TENSION_LGA}% → ${caidaTensionRealPorcentaje <= MAX_CAIDA_TENSION_LGA ? 'CUMPLE' : 'NO CUMPLE'}`;
+        
+        // Actualizar el resultado con la nueva solución, enunciado y propiedades adicionales
+        result.enunciado = enunciado;
+        result.solucion = solucion;
+        result.cgpInfo = { 
+            intensidad: intensidadCalculada.toFixed(2),
+            calibre: calibreCGPSeleccionado,
+            potenciaW: PT,
+            tension: 400,
+            cosfi: factorPotenciaRedondeado
+        };
+        result.fusibleInfo = { fusible: fusibleSeleccionado };
+        result.conductorInfo = conductorInfo;
+        result.factorPotencia = factorPotenciaRedondeado;
+        result.longitudLGA = longitudLGA;
+        // Tablas eliminadas para el bloque 3
+    }
+    
+    return result;
+}
+
+// ================================================================
+// SISTEMA DE EJERCICIOS GUIADOS
+// ================================================================
+
+let guidedExerciseState = {
+    currentExercise: null,
+    currentStep: 0,
+    attempts: 0,
+    maxAttempts: 2,
+    steps: []
+};
+
+function startGuidedExercise() {
+    exerciseTitle.textContent = `Bloque ${appState.currentBlock}: Ejercicio Guiado`;
+    contentArea.innerHTML = '';
+    controlsArea.innerHTML = '';
+    
+    // Generar un nuevo ejercicio
+    const exercise = generateExercise(appState.currentBlock);
+    guidedExerciseState.currentExercise = exercise;
+    guidedExerciseState.currentStep = 0;
+    guidedExerciseState.attempts = 0;
+    
+    // Definir pasos según el bloque
+    if (appState.currentBlock === 1) {
+        guidedExerciseState.steps = createStepsBlock1(exercise);
+    } else if (appState.currentBlock === 2) {
+        guidedExerciseState.steps = createStepsBlock2(exercise);
+    } else {
+        guidedExerciseState.steps = createStepsBlock3(exercise);
+    }
+    
+    displayGuidedExercise();
+}
+
+function createStepsBlock1(exercise) {
+    // Para ejercicios simples del bloque 1
+    // Extraer pasos de la solución real
+    const steps = [];
+    const solucion = exercise.solucion;
+    
+    // El bloque 1 generalmente tiene solo un paso final
+    steps.push({
+        question: "¿Cuál es la potencia total calculada para esta instalación?",
+        answer: exercise.resultado,
+        unit: "W",
+        explanation: "Calcula según el tipo de instalación y los datos del enunciado."
+    });
+    
+    return steps;
+}
+
+function createStepsBlock2(exercise) {
+    // Para edificios completos del bloque 2
+    const steps = [];
+    const solucion = exercise.solucion;
+    
+    // Extraer valores reales de la solución
+    try {
+        // Buscar PH (Potencia de Viviendas)
+        const phMatch = solucion.match(/PH = [\d,.]+ \* [\d,.]+ = ([\d,.]+) W/);
+        if (phMatch) {
+            const phValue = parseFloat(phMatch[1].replace(',', '.'));
+            steps.push({
+                question: "1. ¿Cuál es la carga de viviendas (PH)?",
+                answer: phValue,
+                unit: "W",
+                explanation: "PH = Potencia media × Coeficiente de simultaneidad"
+            });
+        }
+        
+        // Buscar PSG (Servicios Generales)
+        const psgMatch = solucion.match(/PSG = [\d,.]+ \+ [\d,.]+ \+ [\d,.]+ \+ [\d,.]+ = ([\d,.]+) W/);
+        if (psgMatch) {
+            const psgValue = parseFloat(psgMatch[1].replace(',', '.'));
+            steps.push({
+                question: "2. ¿Cuál es la carga de servicios generales (PSG)?",
+                answer: psgValue,
+                unit: "W",
+                explanation: "PSG = Ascensores + Alumbrado + Grupo presión + Auxiliares"
+            });
+        }
+        
+        // Buscar PLC (Locales Comerciales)
+        const plcMatch = solucion.match(/PLC total = ([\d,.]+) W/);
+        if (plcMatch) {
+            const plcValue = parseFloat(plcMatch[1].replace(',', '.'));
+            steps.push({
+                question: "3. ¿Cuál es la carga de locales comerciales (PLC)?",
+                answer: plcValue,
+                unit: "W",
+                explanation: "PLC = Suma de todas las cargas de locales comerciales"
+            });
+        }
+        
+        // Buscar PG (Garaje)
+        const pgMatch = solucion.match(/PG = max\([\d,.]+, [\d,.]+\) = ([\d,.]+) W/);
+        if (pgMatch) {
+            const pgValue = parseFloat(pgMatch[1].replace(',', '.'));
+            steps.push({
+                question: "4. ¿Cuál es la carga del garaje (PG)?",
+                answer: pgValue,
+                unit: "W",
+                explanation: "PG = max(carga por superficie, mínimo normativo)"
+            });
+        }
+        
+        // Buscar PVE (Vehículo Eléctrico)
+        const pveMatch = solucion.match(/PVE = [\d,.]+ \* [\d,.]+ plazas \* [\d,.]+ = ([\d,.]+) W/);
+        if (pveMatch) {
+            const pveValue = parseFloat(pveMatch[1].replace(',', '.'));
+            steps.push({
+                question: "5. ¿Cuál es la carga de vehículo eléctrico (PVE)?",
+                answer: pveValue,
+                unit: "W",
+                explanation: "PVE = Potencia unitaria × Nº plazas × Factor simultaneidad"
+            });
+        }
+        
+        // Paso final: Potencia total
+        steps.push({
+            question: "6. ¿Cuál es la potencia total del edificio (PT)?",
+            answer: exercise.resultado,
+            unit: "W",
+            explanation: "PT = PH + PSG + PLC + PG + PVE"
+        });
+        
+    } catch (error) {
+        // Si hay error en la extracción, usar paso simplificado
+        steps.push({
+            question: "¿Cuál es la potencia total del edificio (PT)?",
+            answer: exercise.resultado,
+            unit: "W",
+            explanation: "PT = PH + PSG + PLC + PG + PVE"
+        });
+    }
+    
+    return steps;
+}
+
+function createStepsBlock3(exercise) {
+    // Para edificios con LGA del bloque 3
+    const steps = [];
+    const solucion = exercise.solucion;
+    
+    try {
+        // Paso 1: PH (Potencia de Viviendas)
+        const phMatch = solucion.match(/PH = [\d,.]+ \* [\d,.]+ = ([\d,.]+) W/);
+        if (phMatch) {
+            const phValue = parseFloat(phMatch[1].replace(',', '.'));
+            steps.push({
+                question: "1. ¿Cuál es la carga de viviendas (PH)?",
+                answer: phValue,
+                unit: "W",
+                explanation: "PH = Potencia media × Coeficiente de simultaneidad"
+            });
+        }
+        
+        // Paso 2: PSG (Servicios Generales)
+        const psgMatch = solucion.match(/PSG = [\d,.]+ \+ [\d,.]+ \+ [\d,.]+ \+ [\d,.]+ = ([\d,.]+) W/);
+        if (psgMatch) {
+            const psgValue = parseFloat(psgMatch[1].replace(',', '.'));
+            steps.push({
+                question: "2. ¿Cuál es la carga de servicios generales (PSG)?",
+                answer: psgValue,
+                unit: "W",
+                explanation: "PSG = Ascensores + Alumbrado + Grupo presión + Auxiliares"
+            });
+        }
+        
+        // Paso 3: PLC (Locales Comerciales)
+        const plcMatch = solucion.match(/PLC total = ([\d,.]+) W/);
+        if (plcMatch) {
+            const plcValue = parseFloat(plcMatch[1].replace(',', '.'));
+            steps.push({
+                question: "3. ¿Cuál es la carga de locales comerciales (PLC)?",
+                answer: plcValue,
+                unit: "W",
+                explanation: "PLC = Suma de todas las cargas de locales comerciales"
+            });
+        }
+        
+        // Paso 4: PG (Garaje)
+        const pgMatch = solucion.match(/PG = max\([\d,.]+, [\d,.]+\) = ([\d,.]+) W/);
+        if (pgMatch) {
+            const pgValue = parseFloat(pgMatch[1].replace(',', '.'));
+            steps.push({
+                question: "4. ¿Cuál es la carga del garaje (PG)?",
+                answer: pgValue,
+                unit: "W",
+                explanation: "PG = max(carga por superficie, mínimo normativo)"
+            });
+        }
+        
+        // Paso 5: PVE (Vehículo Eléctrico)
+        const pveMatch = solucion.match(/PVE = [\d,.]+ \* [\d,.]+ plazas \* [\d,.]+ = ([\d,.]+) W/);
+        if (pveMatch) {
+            const pveValue = parseFloat(pveMatch[1].replace(',', '.'));
+            steps.push({
+                question: "5. ¿Cuál es la carga de vehículo eléctrico (PVE)?",
+                answer: pveValue,
+                unit: "W",
+                explanation: "PVE = Potencia unitaria × Nº plazas × Factor simultaneidad"
+            });
+        }
+        
+        // Paso 6: PT (Potencia Total)
+        steps.push({
+            question: "6. ¿Cuál es la potencia total del edificio (PT)?",
+            answer: exercise.resultado,
+            unit: "W",
+            explanation: "PT = PH + PSG + PLC + PG + PVE"
+        });
+        
+        // Paso 7: Intensidad calculada
+        const intensidadMatch = solucion.match(/Intensidad calculada:.*?= ([\d,.]+) A/);
+        if (intensidadMatch) {
+            const intensidadValue = parseFloat(intensidadMatch[1].replace(',', '.'));
+            steps.push({
+                question: "7. ¿Cuál es la intensidad calculada?",
+                answer: intensidadValue,
+                unit: "A",
+                explanation: "I = P / (√3 × U × cos φ)"
+            });
+        }
+        
+        // Paso 8: Fusible CGP seleccionado
+        const fusibleMatch = solucion.match(/Fusible CGP seleccionado: ([\d,]+) A/);
+        if (fusibleMatch) {
+            const fusibleValue = parseFloat(fusibleMatch[1]);
+            steps.push({
+                question: "8. ¿Cuál es el calibre del fusible CGP seleccionado?",
+                answer: fusibleValue,
+                unit: "A",
+                explanation: "Primer fusible normalizado ≥ 110% de la intensidad calculada"
+            });
+        }
+        
+        // Paso 9: Calibre CGP seleccionado
+        const calibreCGPMatch = solucion.match(/Calibre CGP seleccionado: ([\d,]+) A/);
+        if (calibreCGPMatch) {
+            const calibreCGPValue = parseFloat(calibreCGPMatch[1]);
+            steps.push({
+                question: "9. ¿Cuál es el calibre CGP seleccionado?",
+                answer: calibreCGPValue,
+                unit: "A",
+                explanation: "Primer calibre normalizado ≥ fusible CGP seleccionado"
+            });
+        }
+        
+        // Paso 10.1: Sección por intensidad
+        const seccionIntensidadMatch = solucion.match(/Sección por intensidad.*?: ([\d,]+) mm²/);
+        if (seccionIntensidadMatch) {
+            const seccionIntValue = parseFloat(seccionIntensidadMatch[1]);
+            steps.push({
+                question: "10.1. ¿Cuál es la sección del conductor por intensidad?",
+                answer: seccionIntValue,
+                unit: "mm²",
+                explanation: "Según tabla AMPACIDAD_ITC_BT_19 para el fusible seleccionado"
+            });
+        }
+        
+        // Paso 10.2: Sección normalizada por caída de tensión
+        const seccionCaidaMatch = solucion.match(/Primera sección normalizada ≥ [\d,.]+ mm²: ([\d,]+) mm²/);
+        if (seccionCaidaMatch) {
+            const seccionCaidaValue = parseFloat(seccionCaidaMatch[1]);
+            steps.push({
+                question: "10.2. ¿Cuál es la sección normalizada por caída de tensión?",
+                answer: seccionCaidaValue,
+                unit: "mm²",
+                explanation: "Primera sección de la tabla ≥ sección calculada por caída de tensión"
+            });
+        }
+        
+        // Paso 10.3: Sección final adoptada
+        const seccionFinalMatch = solucion.match(/Sección adoptada \(la mayor\): ([\d,]+) mm²/);
+        if (seccionFinalMatch) {
+            const seccionFinalValue = parseFloat(seccionFinalMatch[1]);
+            steps.push({
+                question: "10.3. ¿Cuál es la sección final adoptada para la LGA?",
+                answer: seccionFinalValue,
+                unit: "mm²",
+                explanation: "La mayor entre la sección por intensidad y por caída de tensión"
+            });
+        }
+        
+    } catch (error) {
+        // Si hay error en la extracción, usar pasos simplificados
+        steps.push({
+            question: "¿Cuál es la potencia total del edificio (PT)?",
+            answer: exercise.resultado,
+            unit: "W",
+            explanation: "PT = PH + PSG + PLC + PG + PVE"
+        });
+        
+        if (exercise.cgpInfo && exercise.cgpInfo.intensidad) {
+            steps.push({
+                question: "¿Cuál es la intensidad calculada?",
+                answer: parseFloat(exercise.cgpInfo.intensidad),
+                unit: "A",
+                explanation: "I = P / (√3 × U × cos φ)"
+            });
+        }
+        
+        if (exercise.fusibleInfo && exercise.fusibleInfo.fusible) {
+            steps.push({
+                question: "¿Cuál es el calibre del fusible CGP seleccionado?",
+                answer: exercise.fusibleInfo.fusible,
+                unit: "A",
+                explanation: "Primer fusible normalizado ≥ 110% de la intensidad calculada"
+            });
+        }
+        
+        if (exercise.cgpInfo && exercise.cgpInfo.calibre) {
+            steps.push({
+                question: "¿Cuál es el calibre CGP seleccionado?",
+                answer: exercise.cgpInfo.calibre,
+                unit: "A",
+                explanation: "Primer calibre normalizado ≥ fusible CGP seleccionado"
+            });
+        }
+    }
+    
+    return steps;
+}
+
+function displayGuidedExercise() {
+    const currentStep = guidedExerciseState.steps[guidedExerciseState.currentStep];
+    
+    let html = `
+        <div class="guided-exercise">
+            <h3>Enunciado del Ejercicio</h3>
+            <div class="enunciado">${guidedExerciseState.currentExercise.enunciado}</div>
+    `;
+    
+    // Mostrar pasos completados
+    for (let i = 0; i < guidedExerciseState.currentStep; i++) {
+        const step = guidedExerciseState.steps[i];
+        html += `
+            <div class="guided-step completed">
+                <div class="step-question">
+                    Paso ${i + 1} de ${guidedExerciseState.steps.length}: ${step.question}
+                </div>
+                <div class="step-feedback step-success">
+                    <strong>✓ Completado:</strong> ${step.answer} ${step.unit}
+                    <br><small>${step.explanation}</small>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Mostrar paso actual
+    if (guidedExerciseState.currentStep < guidedExerciseState.steps.length) {
+        html += `
+            <div class="guided-step">
+                <div class="step-question">
+                    Paso ${guidedExerciseState.currentStep + 1} de ${guidedExerciseState.steps.length}:
+                    ${currentStep.question}
+                </div>
+                
+                <div class="step-input">
+                    <input type="number" id="stepAnswer" placeholder="Tu respuesta" step="any">
+                    <span>${currentStep.unit}</span>
+                    <button class="btn" onclick="checkStepAnswer()">Verificar</button>
+                </div>
+                
+                <div id="stepFeedback" class="step-feedback" style="display: none;"></div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <small>Intentos: ${guidedExerciseState.attempts}/${guidedExerciseState.maxAttempts}</small>
+            </div>
+        `;
+    }
+    
+    html += `</div>`;
+    
+    contentArea.innerHTML = html;
+    
+    // Botón para volver a ejemplos
+    controlsArea.innerHTML = '';
+    const backBtn = document.createElement('button');
+    backBtn.className = 'btn btn-secondary';
+    backBtn.textContent = '← Volver a Ejemplos';
+    backBtn.onclick = displayExamples;
+    controlsArea.appendChild(backBtn);
+    controlsArea.classList.remove('hidden');
+    
+    // Focus en el input si hay paso actual
+    if (guidedExerciseState.currentStep < guidedExerciseState.steps.length) {
+        setTimeout(() => {
+            const input = document.getElementById('stepAnswer');
+            if (input) input.focus();
+        }, 100);
+    }
+}
+
+function checkStepAnswer() {
+    const userAnswer = parseFloat(document.getElementById('stepAnswer').value);
+    const correctAnswer = guidedExerciseState.steps[guidedExerciseState.currentStep].answer;
+    const feedback = document.getElementById('stepFeedback');
+    const tolerance = Math.abs(correctAnswer * 0.02); // Tolerancia del 2%
+    
+    feedback.style.display = 'block';
+    
+    if (Math.abs(userAnswer - correctAnswer) <= tolerance) {
+        // Respuesta correcta
+        feedback.className = 'step-feedback step-success';
+        feedback.innerHTML = `
+            <strong>¡Correcto!</strong> La respuesta es ${correctAnswer}.
+            <br><small>${guidedExerciseState.steps[guidedExerciseState.currentStep].explanation}</small>
+        `;
+        
+        setTimeout(() => {
+            nextStep();
+        }, 2000);
+        
+    } else {
+        // Respuesta incorrecta
+        guidedExerciseState.attempts++;
+        
+        if (guidedExerciseState.attempts >= guidedExerciseState.maxAttempts) {
+            // Mostrar respuesta correcta y continuar
+            feedback.className = 'step-feedback step-hint';
+            feedback.innerHTML = `
+                <strong>Respuesta correcta:</strong> ${correctAnswer}
+                <br><small>${guidedExerciseState.steps[guidedExerciseState.currentStep].explanation}</small>
+                <br><em>Continuemos con el siguiente paso usando este valor correcto.</em>
+            `;
+            
+            setTimeout(() => {
+                nextStep();
+            }, 3000);
+            
+        } else {
+            // Permitir otro intento
+            feedback.className = 'step-feedback step-error';
+            feedback.innerHTML = `
+                <strong>Incorrecto.</strong> Inténtalo de nuevo.
+                <br><small>Tienes ${guidedExerciseState.maxAttempts - guidedExerciseState.attempts} intento(s) más.</small>
+            `;
+            
+            // Limpiar el input
+            document.getElementById('stepAnswer').value = '';
+            document.getElementById('stepAnswer').focus();
+        }
+    }
+}
+
+function nextStep() {
+    guidedExerciseState.currentStep++;
+    guidedExerciseState.attempts = 0;
+    
+    if (guidedExerciseState.currentStep >= guidedExerciseState.steps.length) {
+        // Ejercicio completado
+        showCompletionMessage();
+    } else {
+        // Mostrar siguiente paso
+        displayGuidedExercise();
+    }
+}
+
+function showCompletionMessage() {
+    let html = `
+        <div class="guided-exercise">
+            <h3>Enunciado del Ejercicio</h3>
+            <div class="enunciado">${guidedExerciseState.currentExercise.enunciado}</div>
+    `;
+    
+    // Mostrar todos los pasos completados
+    for (let i = 0; i < guidedExerciseState.steps.length; i++) {
+        const step = guidedExerciseState.steps[i];
+        html += `
+            <div class="guided-step completed">
+                <div class="step-question">
+                    Paso ${i + 1} de ${guidedExerciseState.steps.length}: ${step.question}
+                </div>
+                <div class="step-feedback step-success">
+                    <strong>✓ Completado:</strong> ${step.answer} ${step.unit}
+                    <br><small>${step.explanation}</small>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Mensaje de completación
+    html += `
+            <div class="step-feedback step-success" style="margin-top: 20px; font-size: 1.1em;">
+                <strong>¡Felicitaciones!</strong> Has completado el ejercicio guiado exitosamente.
+                <br><br>
+                Puedes revisar todos los pasos arriba o comenzar un nuevo ejercicio.
+            </div>
+        </div>
+    `;
+    
+    contentArea.innerHTML = html;
+    // Botones para continuar
+    controlsArea.innerHTML = '';
+    
+    const newExerciseBtn = document.createElement('button');
+    newExerciseBtn.className = 'btn btn-guided';
+    newExerciseBtn.textContent = 'Nuevo Ejercicio Guiado';
+    newExerciseBtn.onclick = startGuidedExercise;
+    
+    const backBtn = document.createElement('button');
+    backBtn.className = 'btn btn-secondary';
+    backBtn.textContent = '← Volver a Ejemplos';
+    backBtn.onclick = displayExamples;
+    backBtn.style.marginLeft = '10px';
+    
+    controlsArea.appendChild(newExerciseBtn);
+    controlsArea.appendChild(backBtn);
+}
+
+</script>
+
+</body>
+</html>
